@@ -89,7 +89,7 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         dataset_slice = category_data[:, element_index]
 
         # Constructing a pandas dataframe of the dataset_slice indexed by datetime:
-        node_df = pd.DataFrame(data=dataset_slice, index=self.dataset.time)
+        node_df = pd.DataFrame(data=dataset_slice, index=self.dataset.time, columns=[cat_name])
 
         return node_df
 
@@ -158,7 +158,7 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
             dataset_slice = cat_slice[:, node_index]
 
             # Creating a dataframe of values for the dataset_slice:
-            df = pd.DataFrame(data=dataset_slice, index=self.dataset.time)
+            df = pd.DataFrame(data=dataset_slice, index=self.dataset.time, columns=[cat_name])
 
             # Adding key-value pair to layers_dict and iterating layers int for next loop:
             layer = node[2]
@@ -167,5 +167,22 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         return layers_dict
 
 test = dfsu_ingestion_engine("C:\\Users\\teelu\\Downloads\\concat-10april2019.dfsu")
-#print(test.dataset.items)
+#print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
 #print(test.get_node_layers(-63.08325873, 11.29754091, 'Temperature'))
+
+'''
+# TODO:
+- Create a method that generates a dataframe from an extracted sub-index and
+    a modify both .get_node_data and .get_node_layers methods to utilize this for increased
+    performance
+
+    - Critcal change is in .get_node_layers(). Instead of returning {z-value : dataframe for z-value}
+    it returns {z-value : index corresponding to z-value}. Change should improve
+    currently horrific performance issues w method.
+
+    - Write method that then utilizes the sub-index to dataframe method  to generate
+    a dataframe from each {.get_node_layers} key-value pair as needed.
+
+- Once overall data structure is approved, write documentation for said structure and
+    methods
+'''
