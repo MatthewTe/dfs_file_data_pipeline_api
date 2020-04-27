@@ -73,33 +73,24 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 
         Returns
         -------
-        node_df : pandas dataframe
-            A dataframe that contains all the category specific data of the
-            selected node, indexed by the timeseries provided by the .dfsu
-            file
+        self.extract_data() : pandas dataframe
+            The method calls and returns the method .extract_data() which slices
+            the main dataset, builds a dataframe based on said sliced data and
+            returns a dataframe.
         '''
-        # Slicing the main list data based on the input category name:
-        category_data = self.dataset[cat_name]
 
         # Extracting the index value of the data segement that corresponds to the cords:
         element_index = self.find_closest_element_index(long, lat, depth)
-        #print(element_index)
 
-        # Further slicing the array based on the element_index value:
-        dataset_slice = category_data[:, element_index]
-
-        # Constructing a pandas dataframe of the dataset_slice indexed by datetime:
-        node_df = pd.DataFrame(data=dataset_slice, index=self.dataset.time, columns=[cat_name])
-
-        return node_df
+        # extracting data based on the data category and index as a dataframe:
+        return self.extract_data(cat_name, element_index)
 
     # Method that extracts data from a single category for an whole layer:
-    def get_node_layers(self, long, lat, cat_name):
+    def get_node_layers(self, long, lat):
         '''
-        Method extracts all the data associated with a single data category given
-        a single long/lat point. Unlike .get_node_data this method extracts the
-        data for said category at all elevation levels (at all z-values) associated
-        with the long/lat point.
+        Method extracts all the index values associated with a single long/lat point.
+        Unlike .get_node_data this method extracts the data for said category at
+        all elevation levels (at all z-values) associated with the long/lat point.
 
         Parameters
         ----------
@@ -109,18 +100,13 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         lat : float
             The latitude value for the node that is being extracted
 
-        cat_name : str
-            The name of the category of data that will be extracted from the dataset
-
         Returns
         -------
         layers_dict : dict
             A dictionary containing key-value pairs of z-value determined layers
-            and pandas dataframes containing the relevant data at each layer
+            and the index values indicating the location of the data containing
+            the relevant data at each layer
         '''
-        # Slicing dataset based on category:
-        cat_slice = self.dataset[cat_name]
-
         # Empty list that will by populated by all coord_lst values of the layer:
         layer_coords = []
 
@@ -154,35 +140,54 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
             # Getting index for node:
             node_index = self.find_closest_element_index(*node)
 
-            # Further slicing cat_slice by the node_index:
-            dataset_slice = cat_slice[:, node_index]
-
-            # Creating a dataframe of values for the dataset_slice:
-            df = pd.DataFrame(data=dataset_slice, index=self.dataset.time, columns=[cat_name])
-
             # Adding key-value pair to layers_dict and iterating layers int for next loop:
             layer = node[2]
-            layers_dict[layer] = df
+            layers_dict[layer] = node_index
 
+        # data stored in layers_dict can be extracted from the datset via self.extract_data()
         return layers_dict
+
+    # Method generates a dataframe based on the sliced  dataset and the specific index:
+    def extract_data(self, data_category, element_index):
+        '''
+        Method that extracts the data from the main .dfsu dataset by slicing said
+        dataset by both category and by slice determined index.
+
+        Parameters
+        ----------
+        data_category : str
+            The data category (type) that will be used slice the dataframe based on
+            different data types
+
+        index : int
+            An integer representing the index location of the data in the dataset.
+            This will be used to perform another slice on the dataset.
+
+        Returns
+        --------
+        slice_df : pandas dataframe
+            A dataframe that is generated and formatted based on the dataset
+            sliced via data_category and index.
+        '''
+
+        # Slicing the dataset based on the category:
+        category_slice = self.dataset[data_category]
+
+        # Slicing the dataset based on the input index:
+        index_slice = category_slice[:, element_index]
+
+        # Generating a pandas DataFrame based on the index_slice data:
+        slice_df = pd.DataFrame(data=index_slice, index=self.dataset.time,
+        columns=[data_category])
+
+        return slice_df
+
+
+
+
 
 test = dfsu_ingestion_engine("C:\\Users\\teelu\\Downloads\\concat-10april2019.dfsu")
 #print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
-#print(test.get_node_layers(-63.08325873, 11.29754091, 'Temperature'))
+z_layer = test.get_node_layers(-63.08325873, 11.29754091)
 
-'''
-# TODO:
-- Create a method that generates a dataframe from an extracted sub-index and
-    a modify both .get_node_data and .get_node_layers methods to utilize this for increased
-    performance
-
-    - Critcal change is in .get_node_layers(). Instead of returning {z-value : dataframe for z-value}
-    it returns {z-value : index corresponding to z-value}. Change should improve
-    currently horrific performance issues w method.
-
-    - Write method that then utilizes the sub-index to dataframe method  to generate
-    a dataframe from each {.get_node_layers} key-value pair as needed.
-
-- Once overall data structure is approved, write documentation for said structure and
-    methods
-'''
+print(test.extract_data('Temperature', z_layer[-10.16637]))
