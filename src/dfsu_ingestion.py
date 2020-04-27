@@ -105,7 +105,8 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         layers_dict : dict
             A dictionary containing key-value pairs of z-value determined layers
             and the index values indicating the location of the data containing
-            the relevant data at each layer
+            the relevant data at each layer. Each element in the dict can be
+            represented as a dataframe using the self.extract_data() method.
         '''
         # Empty list that will by populated by all coord_lst values of the layer:
         layer_coords = []
@@ -186,8 +187,6 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 
 
 
-test = dfsu_ingestion_engine("C:\\Users\\teelu\\Downloads\\concat-10april2019.dfsu")
+test = dfsu_ingestion_engine("tests\\test_dfsu\\concat-10april2019.dfsu")
 #print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
-z_layer = test.get_node_layers(-63.08325873, 11.29754091)
-
-print(test.extract_data('Temperature', z_layer[-10.16637]))
+#z_layer = print(test.get_node_layers(-63.08325873, 11.29754091))
