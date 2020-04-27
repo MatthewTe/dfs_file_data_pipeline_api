@@ -4,11 +4,11 @@ output of a DHI hydrodynamic model (.dfsu mesh files) to a web api that serves a
 the data.
 
 ## Table of Contents
-* [Raw Data Ingestion](placeholder)
+* [Raw Data Ingestion](https://github.com/MatthewTe/dfsu_visualization_pipeline#raw-data-ingestion)
 
 ## Raw Data Ingestion
 The data generated from the DHI model is represented as a 3-D mesh, meant to be plotted onto a GIS visualization tool such as
-MIKE ZERO. Using the DHI python library [mikeio](placeholder) dfsu files are able to be read in as a series of nested arrays.
+MIKE ZERO. Using the DHI python library [mikeio](https://github.com/DHI/mikeio) dfsu files are able to be read in as a series of nested arrays.
 
 Data ingestion is done via the `dfsu_ingestion_engine()` object which inherits from the mikeio Dfsu() class and provides several
 methods of extracting data in formats that are easily readable in a non-GIS context.
