@@ -8,12 +8,6 @@ import math
 # Misc Imports
 import datetime
 
-'''dfsu = Dfsu()
-data = dfsu.read("C:\\Users\\teelu\\Downloads\\concat-10april2019.dfsu")
-idx = dfsu.get_node_coords()
-test = dfsu.find_closest_element_index(idx[0][0],idx[0][1], idx[0][2])'''
-
-
 
 class dfsu_ingestion_engine(mikeio.Dfsu):
     '''
@@ -187,6 +181,6 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 
 
 
-test = dfsu_ingestion_engine("tests\\test_dfsu\\concat-10april2019.dfsu")
+#test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
+#print(test.dataset.items)
 #print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
-#z_layer = print(test.get_node_layers(-63.08325873, 11.29754091))
