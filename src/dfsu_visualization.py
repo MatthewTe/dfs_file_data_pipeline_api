@@ -12,13 +12,12 @@ import dash_html_components as html
 '''
 # TODO:
 
-- Once meeting confirms visualization tools wanted, build a main class that
-    and x,y,z values and returns a plotly figure that represents the dashboard containing
-    all data plotted from a single node point.
+- Look into GIS map of area that indicates the location if the point input
 
-- Clean up subplots and integrate radial polar plot into figure.
+- Clean up Polar Plot so that it doesn't look horrific
+    - Look into making Polar plot a pie-slice
 
-- Look into GIS map of area that indicates the location if the point input???
+- Map Runtime for dashboard method.
 '''
 
 class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
@@ -73,16 +72,27 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
         '''
 
         # Creating the subplot format:
-        fig = make_subplots(rows=3, cols=1, shared_xaxes=True, print_grid=True,
-        vertical_spacing=0.5/3) # Spacing Between Rows
+        fig = make_subplots(
+            rows=3, cols=2,
+            #shared_xaxes=True,
+            #print_grid=True,
+            vertical_spacing=0.5/3,
+            subplot_titles=('Current Speed', 'Polar Plot of Speed and Direction\n',
+            'Water Temperature', 'Water Density'),
+            # Specifying the format types for each subplot:
+            specs = [[{'type':'xy'}, {'rowspan': 3, 'type': 'polar'}],
+                     [{'type':'xy'}, None],
+                     [{'type':'xy'}, None]]
+            )
+
         fig['layout'].update(height=800) # Pysical Size of Page
 
         # Creating dataframes that will be used to generate individual plots:
         current_speed = self.get_node_data(long, lat, depth, 'Current speed')
         temperature = self.get_node_data(long, lat, depth, 'Temperature')
         density = self.get_node_data(long, lat, depth, 'Density')
-
-        # Plotting three basic timeseries and adding them to the subplot:
+        polar_data = self.get_node_polar_coords(long, lat, depth)
+        # Creating data used to plot the polar plot of current speed and direction
 
         # Current Speed:
         fig.add_trace(go.Scatter(x=current_speed.index, y=current_speed['Current speed'],
@@ -94,6 +104,9 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
         fig.add_trace(go.Scatter(x=density.index, y=density['Density'],
         name='Water Density'), row=3, col=1,)
 
+        fig.add_trace(go.Barpolar(r=polar_data['r'], theta=polar_data['theta'],
+        width=2.5, opacity=0.7, marker_line_color="black", name='Current Direction and Speed'),
+         row=1, col=2)
 
         # Updating y_axis labels:
         fig.update_yaxes(title_text='m/s', row=1, col=1)
@@ -104,8 +117,8 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
         title_text = f'CDL Analytics Dashboard for Model Node Located at \
 [Long:{long}     Lat:{lat}   Depth:{depth}]'
 
-        fig.update_layout(title_text=title_text, xaxis3_rangeslider_visible=True,
-        template='seaborn')
+        fig.update_layout(title_text=title_text, xaxis_rangeslider_visible=False,
+        showlegend=False)
 
         return fig
 

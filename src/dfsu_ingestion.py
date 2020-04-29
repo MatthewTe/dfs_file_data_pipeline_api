@@ -142,6 +142,83 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         # data stored in layers_dict can be extracted from the datset via self.extract_data()
         return layers_dict
 
+    # Method that extracts data in the appropriate format to be input into a polar plot:
+    def get_node_polar_coords(self, long, lat, depth):
+        '''
+        Method calls existing data slicing methods to extract data pertaining to
+        Speed and Horizontal Direction of currents at a single node (long,lat,depth)
+
+        The method then transforms the radial directional data into degrees that
+        can be plotted onto a polar coordinate system.
+
+        - Assumes polar coordinate format (r, theta).
+        - Collects data based on Dataset['Current speed'] &
+            Dataset['Current direction (Horizontal)']
+
+        Parameters
+        ----------
+        long : float
+            The longnitude value of the location point
+
+        lat : float
+            The latitude value of the location point
+
+        depth : float
+            The depth value of the location point
+
+        Returns
+        --------
+        polar_df : pandas dataframe
+            A two column dataframe containing all the time series data for
+            Current speeds and Current direction that can be expressed by a polar
+            coordinate system as (r=Currnet speeds, theta=Current direction)
+        '''
+
+        # Slicing and extracting speed and directional data from the main dataset:
+        current_speed = self.get_node_data(long, lat, depth, 'Current speed')
+        current_direction = self.get_node_data(long, lat, depth, 'Current direction (Horizontal)')
+
+        # Nested method to convert the stacked radian data to usable degree values:
+        def get_current_degree(radian):
+            '''
+            Converts stacked radian values to degree values re-scalled to 360
+            degree context.
+
+            Parameters
+            ----------
+            radian : float
+                The radian direction value from the Dataset
+
+            Returns
+            degree_value : float
+                The re-scaled degree value that can be used for polar coords
+            '''
+
+            # Converting radian value straight to degrees using math:
+            total_degree = math.degrees(radian)
+
+            # Determining number of total rotations:
+            num_rotation = total_degree / 360
+
+            # Extracting the decimal value from num_rotation:
+            frac, whole = math.modf(num_rotation)
+
+            # Calcuating the value of total_degree if it was re-scaled to a 360 degree scale:
+            degree_value = (360 * frac)
+
+            return degree_value
+
+
+        # Converting Direction from Radians to Degrees:
+        theta = current_direction['Current direction (Horizontal)'].apply(lambda x: get_current_degree(x))
+
+        # Creating a new dataframe that contains polar coordinate data columns:
+        polar_df = pd.concat([current_speed, theta], axis=1)
+        polar_df.rename(columns={'Current speed': 'r', 'Current direction (Horizontal)': 'theta'},
+         inplace=True)
+
+        return polar_df
+
     # Method generates a dataframe based on the sliced  dataset and the specific index:
     def extract_data(self, data_category, element_index):
         '''
@@ -178,11 +255,12 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         return slice_df
 
 '''
-# TODO: 
+# TODO:
 - Perform efficency optimization on the dfsu_ingestion_engine to reduce runtime/
 address bottleneck'''
 
 
 #test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
 #print(test_data.dataset.items)
-#print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
+#print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current direction (Horizontal)'))
+#print(test_data.get_node_polar_coords(-63.08325873, 11.29754091, -2.322656))
