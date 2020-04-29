@@ -177,10 +177,12 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 
         return slice_df
 
-
-
+'''
+# TODO: 
+- Perform efficency optimization on the dfsu_ingestion_engine to reduce runtime/
+address bottleneck'''
 
 
 #test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
-#print(test.dataset.items)
+#print(test_data.dataset.items)
 #print(test.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
