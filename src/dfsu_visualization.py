@@ -13,10 +13,11 @@ import dash_html_components as html
 # TODO:
 
 - Look into GIS map of area that indicates the location if the point input
-
-- Clean up Polar Plot so that it doesn't look horrific
-    - Look into making Polar plot a pie-slice
-
+- UPDATE DOCUMENTATION
+- Add All timeseries plots to the plot_node_data method.
+- Change Polar plot to used cardinal points vs degrees and include colorscale and
+    marker.line.color array. to set custom color scale based on current speed. OR
+    use autocolorscale see plotly polar plot documentation.
 - Map Runtime for dashboard method.
 '''
 
