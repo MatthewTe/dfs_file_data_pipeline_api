@@ -43,6 +43,33 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
             # TODO: Write custom error msg.
             pass
 
+        '''
+        # WARNING: The data categories that have been assigned by the mikeio Dfsu()
+        method are incorrect. Instead of modifying the actual data assignment method
+        in the Dfsu library the data columns are re-mapped using a dict internally.
+
+        Edit this dict based on the re-mapping that needs to take place. Current
+        column re-mapping includes:
+
+        - Temperature (Degrees Celsius) --> Salinity (PSU)
+        - Density (kg/m^3) ---------------> Temperature (Degrees Celsius)
+        - Current Direction (radians) ----> Density (kg/m^3)
+        - Current Speed (m/s) ------------> Current Direction (radians)
+        - W Velocity (m/s) ---------------> Current Speed (m/s)
+        - Z coordinate -------------------> U Velocity (m/s)
+        '''
+
+        # Declaring the re-mapping dict: {'Data we want':'Data from Dfsu() Dataset'}
+        self.map_dict = {'Salinity':'Temperature',
+                    'Temperature':'Density',
+                    'Density':'Current direction (Horizontal)',
+                    'Current direction':'Current speed',
+                    'Current speed':'W velocity',
+                    'W velocity':'V velocity',
+                    'U velocity':'Z coordinate'
+                    }
+
+
     # Method that extracts all data from a single category for a single point:
     def get_node_data(self, long, lat, depth, cat_name):
         '''
@@ -153,7 +180,7 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 
         - Assumes polar coordinate format (r, theta).
         - Collects data based on Dataset['Current speed'] &
-            Dataset['Current direction (Horizontal)']
+            Dataset['Current direction']
 
         Parameters
         ----------
@@ -175,46 +202,12 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         '''
 
         # Slicing and extracting speed and directional data from the main dataset:
-        current_speed = self.get_node_data(long, lat, depth, 'Current speed')
-        current_direction = self.get_node_data(long, lat, depth, 'Current direction (Horizontal)')
-
-        # Nested method to convert the stacked radian data to usable degree values:
-        def get_current_degree(radian):
-            '''
-            Converts stacked radian values to degree values re-scalled to 360
-            degree context.
-
-            Parameters
-            ----------
-            radian : float
-                The radian direction value from the Dataset
-
-            Returns
-            degree_value : float
-                The re-scaled degree value that can be used for polar coords
-            '''
-
-            # Converting radian value straight to degrees using math:
-            total_degree = math.degrees(radian)
-
-            # Determining number of total rotations:
-            num_rotation = total_degree / 360
-
-            # Extracting the decimal value from num_rotation:
-            frac, whole = math.modf(num_rotation)
-
-            # Calcuating the value of total_degree if it was re-scaled to a 360 degree scale:
-            degree_value = (360 * frac)
-
-            return degree_value
-
-
-        # Converting Direction from Radians to Degrees:
-        theta = current_direction['Current direction (Horizontal)'].apply(lambda x: get_current_degree(x))
+        r = self.get_node_data(long, lat, depth, 'Current speed')
+        theta = self.get_node_data(long, lat, depth, 'Current direction')
 
         # Creating a new dataframe that contains polar coordinate data columns:
-        polar_df = pd.concat([current_speed, theta], axis=1)
-        polar_df.rename(columns={'Current speed': 'r', 'Current direction (Horizontal)': 'theta'},
+        polar_df = pd.concat([r, theta], axis=1)
+        polar_df.rename(columns={'Current speed': 'r', 'Current direction': 'theta'},
          inplace=True)
 
         return polar_df
@@ -243,7 +236,8 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         '''
 
         # Slicing the dataset based on the category:
-        category_slice = self.dataset[data_category]
+        category_slice = self.dataset[self.map_dict[data_category]]
+        #print(self.map_dict[data_category])
 
         # Slicing the dataset based on the input index:
         index_slice = category_slice[:, element_index]
@@ -262,5 +256,12 @@ address bottleneck'''
 
 #test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
 #print(test_data.dataset.items)
-#print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current direction (Horizontal)'))
 #print(test_data.get_node_polar_coords(-63.08325873, 11.29754091, -2.322656))
+
+
+'''
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Salinity'))
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Density'))
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current direction'))
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current speed'))'''
