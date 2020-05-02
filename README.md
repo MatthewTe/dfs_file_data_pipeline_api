@@ -4,7 +4,7 @@ output of a DHI hydrodynamic model (.dfsu mesh files) to a web api that serves a
 the data.
 
 ## Table of Contents
-* ### [Raw Data Ingestion](https://github.com/MatthewTe/dfsu_visualization_pipeline#raw-data-ingestion)
+* ### [Raw Data Ingestion](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20ingestion.md)
 * ### [Data Visualization](Placeholder)
 
 ## Requirements
