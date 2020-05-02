@@ -3,7 +3,6 @@ The data visualization package is written mainly using the plotly graphics libra
 
 ## Table of Contents
 * ### [dashboard()](placeholder)
-** ## [plot_node_data()](placeholder)
 
 ## `dashboard(filepath)`
 The object used to generate ready-made dashboards us the `dashboard()` object. This object inherits from its parent class: the `dfsu_ingestion_engine()` and uses the dfsu_ingestion_engine API to call data from unstructured dfsu files. It then uses its methods to plot various dashboards.
