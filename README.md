@@ -5,7 +5,7 @@ the data.
 
 ## Table of Contents
 * ### [Raw Data Ingestion](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20ingestion.md)
-* ### [Data Visualization](Placeholder)
+* ### [Data Visualization](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20visualization.md)
 
 ## Requirements
 TODO: Add Requirements for installation, conda envs, MIKE SDK, python libraries
