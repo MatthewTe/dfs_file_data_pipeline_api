@@ -8,7 +8,7 @@ methods of extracting data in formats that are easily readable in a non-GIS cont
 ## Table of Contents
 * ### [get_node_data()](Placeholder)
 * ### [get_node_layers()](Placeholder)
-* ### [extract_data()](Placeholder)
+* ### [extract_data()](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20ingestion.md#extract_dataself-data_category-element_index)
 
 ## Data Category Re-Mapping:
 **Note: An unknown error that occurs when using the mikeio `Dfsu` method to extract and read data from an unstructured dfsu file: The categories that are assigned to datasets are assigned incorrectly. This creates an issue when ingesting different dfsu files and as such the data categories need to be manually re-mapped.**
