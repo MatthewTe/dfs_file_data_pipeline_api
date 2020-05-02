@@ -6,7 +6,7 @@ Data ingestion is done via the `dfsu_ingestion_engine()` object which inherits f
 methods of extracting data in formats that are easily readable in a non-GIS context. Data extracted by these methods via the input of longitude, latitude and a depth value (z-value) in some cases.  
 
 ## Table of Contents
-### * [get_node_data()](Placeholder)
+### - [get_node_data()](Placeholder)
 ### * [get_node_layers()](Placeholder)
 ### * [extract_data()](Placeholder)
 
