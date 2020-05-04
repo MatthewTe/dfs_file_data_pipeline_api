@@ -13,7 +13,7 @@ The object used to generate ready-made dashboards us the `dashboard()` object. T
 
 Once the file path to the .dfsu file has been input and the ingestion engine has been initialized there are several methods that can be called to visualize data from the dfsu files.
 
-`plot_node_data(self, long, lat, depth)`
+## `plot_node_data(self, long, lat, depth)`
 This is the main method that is used to generate a dashboard for a single point (long, lat, depth). It is generated as a plotly subplot with the figures inserted into each subplot coming from various other plot methods such as `create_timeseries()`
 
 The dashboard contains the following data on a single node:
@@ -35,7 +35,7 @@ fig.add_trace(self.create_polar_plot(long,lat,depth,'Current speed','Current dir
 ```
 Naturally this method only invokes various plotly figure creating methods such as `create_timeseries()` and `create_polar_plot()` and inserting them into pre-formatted subplots.
 
-`create_timeseries(self, long, lat, depth, plot_name)`
+## `create_timeseries(self, long, lat, depth, plot_name)`
 This method generates and returns a plotly.graph_object of a timeseries. The data that is used to plot the graph as well as the formatting for the said graph is determined by a dictionary containing key-value pairs that contained all the necessary formatting strings and strings to call the data API.
 
 For Example:
