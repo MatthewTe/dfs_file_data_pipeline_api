@@ -2,7 +2,7 @@
 The data visualization package is written mainly using the plotly graphics library to create interactive plots on a web based application. Such as a Flask Dash application. The methods in the visualization script can be invoked to produce ready-made complicated plots based on the configuration of the methods.
 
 ## Table of Contents
-* ### [dashboard()](placeholder)
+* ### [dashboard()](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20visualization.md#dashboardfilepath)
 * #### [create_timeseries()](placeholder)
 * #### [create_polar_plot()](placeholder)
 
