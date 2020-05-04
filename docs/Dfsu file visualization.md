@@ -3,6 +3,7 @@ The data visualization package is written mainly using the plotly graphics libra
 
 ## Table of Contents
 * ### [dashboard()](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20visualization.md#dashboardfilepath)
+* #### [plot_node_data()](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20visualization.md#plot_node_dataself-long-lat-depth)
 * #### [create_timeseries()](placeholder)
 * #### [create_polar_plot()](placeholder)
 
