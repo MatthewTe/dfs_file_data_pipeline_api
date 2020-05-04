@@ -59,7 +59,7 @@ The parameters passed into the `go.Scatter()` are determined by the following di
 ```
 This allows Scatter plot's titles, formatting and data requests to be modified easily by editing the formatting dict associated with each plot_name string.
 
-`create_polar_plot(self,long,lat,depth,r_column,theta_column)`
+## `create_polar_plot(self,long,lat,depth,r_column,theta_column)`
 Like the `create_timeseries()` method, `create_polar_plot()` produces a polar plot based on input r and theta values. Again with this method, everything from the data called from the API to the formatting and labeling of the polar plot is done based on the corresponding key-value pair of `"r_column"`/`'theta_column'` to the formatting dictionary in `self.timeseries_format`
 ```python
 barpolar_plot = go.Barpolar(
