@@ -1,5 +1,8 @@
 # Importing data ingestion engine to access data from dfsu files:
 import dfsu_ingestion
+# Importing data management packages:
+import math
+import pandas as pd
 # Importing data visualization packages:
 import plotly.graph_objects as go
 import plotly.express as px
@@ -13,11 +16,9 @@ import dash_html_components as html
 # TODO:
 
 - Look into GIS map of area that indicates the location if the point input
+
 - UPDATE DOCUMENTATION
-- Add All timeseries plots to the plot_node_data method.
-- Change Polar plot to used cardinal points vs degrees and include colorscale and
-    marker.line.color array. to set custom color scale based on current speed. OR
-    use autocolorscale see plotly polar plot documentation.
+
 - Map Runtime for dashboard method.
 '''
 
@@ -43,7 +44,18 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
         # Initalizing dfsu_ingestion_engine:
         super().__init__(filepath) # NOTE: initalizes ingestion engine internally.
 
-        # Method that returns a figure representing the main dashboard of a single point:
+        # Key-Value store of config information for each time series plot:
+        self.timeseries_format = {
+            'Salinity': {'df_column': 'Salinity', 'title':'Water Salinity','units':'PSU'},
+            'Temperature' : {'df_column':'Temperature', 'title':'Water Temperature', 'units':'Degrees Celsius'},
+            'Density' : {'df_column':'Density', 'title':'Water Density', 'units':'kg/m^3'},
+            'Current direction' : {'df_column':'Current direction', 'title':'Current Direction', 'units':'Radians'},
+            'Current speed' : {'df_column':'Current speed', 'title':'Current Speed', 'units': 'm/s'},
+                                }
+
+        # Key-Value store of config information for each polar radial plot:
+        self.barpolar_format = {}
+    # Method that returns a figure representing the main dashboard of a single point:
     def plot_node_data(self, long, lat, depth):
         '''
         Method returns a plotly figure object containing all the relevant graphs
@@ -52,6 +64,7 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
             - Density (kg per meter pow 3)
             - Temperature (degree Celsius)
             - Current direction (Horizontal) (radian)
+            - Salinity (PSU)
 
         Parameters
         ----------
@@ -74,54 +87,176 @@ class dashboard(dfsu_ingestion.dfsu_ingestion_engine):
 
         # Creating the subplot format:
         fig = make_subplots(
-            rows=3, cols=2,
+            rows=4, cols=2,
             #shared_xaxes=True,
             #print_grid=True,
             vertical_spacing=0.5/3,
-            subplot_titles=('Current Speed', 'Polar Plot of Speed and Direction\n',
-            'Water Temperature', 'Water Density'),
+            subplot_titles=(
+            self.timeseries_format['Current speed']['title'],
+            'Polar Plot of Speed and Direction',
+            self.timeseries_format['Temperature']['title'],
+            self.timeseries_format['Density']['title'],
+            self.timeseries_format['Salinity']['title']),
             # Specifying the format types for each subplot:
-            specs = [[{'type':'xy'}, {'rowspan': 3, 'type': 'polar'}],
+            specs = [[{'type':'xy'}, {'rowspan': 4, 'type': 'polar'}],
+                     [{'type':'xy'}, None],
                      [{'type':'xy'}, None],
                      [{'type':'xy'}, None]]
-            )
-
+                     )
         fig['layout'].update(height=800) # Pysical Size of Page
 
-        # Creating dataframes that will be used to generate individual plots:
-        current_speed = self.get_node_data(long, lat, depth, 'Current speed')
-        temperature = self.get_node_data(long, lat, depth, 'Temperature')
-        density = self.get_node_data(long, lat, depth, 'Density')
-        polar_data = self.get_node_polar_coords(long, lat, depth)
-        # Creating data used to plot the polar plot of current speed and direction
-
         # Current Speed:
-        fig.add_trace(go.Scatter(x=current_speed.index, y=current_speed['Current speed'],
-        name='Current Speed'), row=1, col=1)
+        fig.add_trace(self.create_timeseries(long, lat, depth, 'Current speed'),
+        row=1, col=1)
+        fig.update_yaxes(title_text=self.timeseries_format['Current speed']['units'],
+            row=1, col=1)
+
         # Temperature:
-        fig.add_trace(go.Scatter(x=temperature.index, y=temperature['Temperature'],
-        name='Water Temperature'), row=2, col=1)
+        fig.add_trace(self.create_timeseries(long, lat, depth, 'Temperature'),
+            row=2, col=1)
+        fig.update_yaxes(title_text=self.timeseries_format['Temperature']['units'],
+            row=2, col=1)
+
         # Density:
-        fig.add_trace(go.Scatter(x=density.index, y=density['Density'],
-        name='Water Density'), row=3, col=1,)
+        fig.add_trace(self.create_timeseries(long, lat, depth, 'Density'),
+            row=3, col=1)
+        fig.update_yaxes(title_text=self.timeseries_format['Density']['units'],
+            row=3, col=1)
 
-        fig.add_trace(go.Barpolar(r=polar_data['r'], theta=polar_data['theta'],
-        width=2.5, opacity=0.7, marker_line_color="black", name='Current Direction and Speed'),
-         row=1, col=2)
+        # Salinity:
+        fig.add_trace(self.create_timeseries(long, lat, depth, 'Salinity'),
+            row=4, col=1)
+        fig.update_yaxes(title_text=self.timeseries_format['Salinity']['units'],
+            row=4, col=1)
 
-        # Updating y_axis labels:
-        fig.update_yaxes(title_text='m/s', row=1, col=1)
-        fig.update_yaxes(title_text='Degrees Celsius', row=2, col=1)
-        fig.update_yaxes(title_text='kg/meter^3', row=3, col=1)
+        # Polar Current Direction and Speed Plot:
+        fig.add_trace(self.create_polar_plot(long, lat, depth, 'Current speed',
+        'Current direction'), row=1, col=2)
 
         # Building title text string based on coordinate input:
         title_text = f'CDL Analytics Dashboard for Model Node Located at \
 [Long:{long}     Lat:{lat}   Depth:{depth}]'
 
-        fig.update_layout(title_text=title_text, xaxis_rangeslider_visible=False,
-        showlegend=False)
+        fig.update_layout(title_text=title_text,
+            xaxis_rangeslider_visible=False,
+            showlegend=False,
+            # Setting polar plot axis to correct directional format:
+            polar=dict(
+                angularaxis = dict(
+                        rotation=90,
+                        direction= 'clockwise',
+                        ),
+                radialaxis = dict(showticklabels=False),
+                sector = self.range
+                    )
+                )
 
         return fig
+
+    def create_timeseries(self, long, lat, depth, plot_name):
+        '''
+        Method plots and returns a plotly graph objects of timeseries data. The
+        data is extracted from the dfsu_ingestion_engine and the format of the
+        timeseries is set by the timeseries_format dict.
+
+        Parameters
+        ----------
+        long : float
+            The longnitude value of the location point
+
+        lat : float
+            The latitude value of the location point
+
+        depth : float
+            The depth value of the location point
+
+        plot_name : str
+            This is the category string that will be used to retrieve the dfsu data
+            and to determine the format of the timeseries.
+
+        Returns
+        -------
+        timeseries_plot : plotly.graph_objects
+            The plotly graph object that can be plotted either as a standalone or
+            onto a subplot.
+        '''
+
+        # Extracting data based on category:
+        timeseries_data = self.get_node_data(long, lat, depth, plot_name)
+
+        # Creating the timeseries plot and formatting it based on timeseries_format:
+        timeseries_plot = go.Scatter(x=timeseries_data.index,
+            y=timeseries_data[self.timeseries_format[plot_name]['df_column']],
+            name= self.timeseries_format[plot_name]['title'])
+
+        return timeseries_plot
+
+    # Method that plots a specific polar plot:
+    def create_polar_plot(self, long, lat, depth, r_column, theta_column):
+        '''
+        Method plots and returns a plotly graph object that contains a polar/radial
+        plot based on the input coordinates and the graph format pulled from a
+        formatting dictionary
+
+        Parameters
+        ----------
+        long : float
+            The longnitude value of the location point
+
+        lat : float
+            The latitude value of the location point
+
+        depth : float
+            The depth value of the location point
+
+        r_column : str
+            A string indicating the data category that will be extracted to form
+            the r values in the (r, theta) polar coordinate system via the data
+            extraction api.
+
+        theta_column : str
+            A string indicating the data category that will be extracted to form
+            the theta values in the (r, theta) polar coordinate system via the data
+            extraction api. This value MUST be either radians or degrees.
+
+        Returns
+        -------
+        barpolar_plot : plotly.graph_objects
+            A plotly graphing object that can be inserted into a plotly figure.
+        '''
+
+        # Extracting data from the ingestion engine:
+        r = self.get_node_data(long, lat, depth, r_column)
+        theta = self.get_node_data(long, lat, depth, theta_column)
+
+        # Attempting to convert the theta to degree values of they are in radians:
+        try:
+            theta = theta.apply(lambda x : math.degree(x))
+        except:
+            pass
+
+
+        # Initalizing the barpolar plot based on formatting dict:
+        barpolar_plot = go.Barpolar(
+                r=r[self.timeseries_format[r_column]['df_column']],
+                theta=theta[self.timeseries_format[theta_column]['df_column']],
+                width=7.0,
+                opacity=0.8,
+                marker=dict(
+                    color=r[self.timeseries_format[r_column]['df_column']],
+                    colorscale="Viridis",
+                    colorbar=dict(
+                        title=self.timeseries_format[r_column]['units']
+                        )
+                    )
+                )
+
+        return barpolar_plot
+
+
+
+
+
 
 # Testing figure plotting:
 dash_test = dashboard("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
