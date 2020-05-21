@@ -8,6 +8,33 @@ import math
 # Misc Imports
 import datetime
 
+class dfs0_ingestion_engine(mikeio.Dfs0):
+    '''
+    This is the object that ingests a dfs0 file based on a file path and provides
+    a series of APIs that allows data to be queried and retrieved. The base for all
+    of the method APIs comes from the Dfs0 object inherited from the mikeio software
+    library.
+
+    Parameters
+    ----------
+    filepath : str
+        A string representing the path to the dfs0 file that is going to be parsed
+    '''
+    def __init__(self, filepath):
+
+        # Declaring Instance variable:
+        self.filepath = filepath
+
+        # Initalizing the mikeio.Dfs0 object with the parameter filepath:
+        super().__init__()
+
+        # Creating a dataframe from the dfs0 file and declaring it as an instace var:
+        self.main_df = self.to_dataframe(self.filepath)
+        print(self.main_df.columns)
+        # TODO: Communicate with Ami about how data should be extracted from dataframe.
+
+test =  dfs0_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\TT_HD_BPTT_Cypre_F120.dfs0")
+
 
 class dfsu_ingestion_engine(mikeio.Dfsu):
     '''
@@ -251,17 +278,14 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
 '''
 # TODO:
 - Perform efficency optimization on the dfsu_ingestion_engine to reduce runtime/
-address bottleneck'''
+address bottleneck
 
-
-#test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
-#print(test_data.dataset.items)
-#print(test_data.get_node_polar_coords(-63.08325873, 11.29754091, -2.322656))
-
-
-'''
+test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
+print(test_data.dataset.items)
+print(test_data.get_node_polar_coords(-63.08325873, 11.29754091, -2.322656))
 print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Salinity'))
 print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
 print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Density'))
 print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current direction'))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current speed'))'''
+print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current speed'))
+'''
