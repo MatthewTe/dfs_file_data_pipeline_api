@@ -15,25 +15,6 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
-'''
-# TODO:
-- Look into refactoring the plot_node_data method so it takes an index value instead of
-    a three point location value. Make decisions based on performance?
-
-- Research Dash
-    - Can clickable links be imbeded into plotly graphs that send queries to api?
-    - How much web infastructure can dash support? Does it need to be wrapped in
-        flask/django?
-
-- Look into GIS map of area that indicates the location if the point input.
-    - Back to dash question, can an on-hover link be generated based on long lat and
-        be send back as an api request/HTTP re-direct request?
-    - Can plotly integrate a real world map due to provided map being wayy to low rez?
-    - Is there a more specific matchbox map avalible for go.Scattergeo()?
-    - Can/should shapefiles be manually input?
-
-- Map Runtime for dashboard method.
-'''
 test = gpd.read_file("C:\\Users\\teelu\\OneDrive\\Desktop\\model_shapefiles\\TTmesh-Feb2018_Nodes.shp")
 #print(test)
 test.plot()
