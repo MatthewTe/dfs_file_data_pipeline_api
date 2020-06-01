@@ -33,7 +33,7 @@ class dfs0_ingestion_engine(mikeio.Dfs0):
         print(self.main_df.columns)
         # TODO: Communicate with Ami about how data should be extracted from dataframe.
 
-test =  dfs0_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\TT_HD_BPTT_Cypre_F120.dfs0")
+# test =  dfs0_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\TT_HD_BPTT_Cypre_F120.dfs0")
 
 
 class dfsu_ingestion_engine(mikeio.Dfsu):
