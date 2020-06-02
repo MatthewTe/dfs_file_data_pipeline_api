@@ -8,7 +8,7 @@ the data.
 * ### Pipeline Design
 * ### Documentation
   * #### [DFS Visualization API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md)
-  * #### [DFS File Ingestion API(https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md)
+  * #### [DFS File Ingestion API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md)
   * #### [DFS File Query API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20query%20api.md)
 
 ## Requirements
