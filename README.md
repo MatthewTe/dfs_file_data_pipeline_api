@@ -7,8 +7,9 @@ the data.
 * ### Requirements
 * ### Pipeline Design
 * ### Documentation
-  * #### [Raw Data Ingestion](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20ingestion.md)
-  * #### [Data Visualization](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/Dfsu%20file%20visualization.md)
+  * #### [DFS Visualization API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md)
+  * #### [DFS File Ingestion API(https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md)
+  * #### [DFS File Query API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20query%20api.md)
 
 ## Requirements
 TODO: Add Requirements for installation, conda envs, MIKE SDK, python libraries
