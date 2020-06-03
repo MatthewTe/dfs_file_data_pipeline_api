@@ -12,7 +12,7 @@ The query api works given a path to a root directory where all DFS files are sto
 |----|TT_HD
 |------|Results
 |--------|(yyyymmddhh) Date File
-|----------|TimeSeries folder
+|----------|Datetime folder
 |----------|Client Specific dfsu folder
 |----------|HD_TT_01.dfsu
 |----------|HD_TT_02.dfsu
@@ -41,3 +41,33 @@ Due to this use of `if in` the date format can be lengthened or shortened to cha
 specificity of the search:
 
 For example setting the date parameter to `"2020"` would return all client dfsu paths for the whole year of 2020. Setting the date parameter to `"202010"` would return all client dfsu paths for October 2020 etc etc.
+
+### `get_client_dates(self, client_name)`
+This method makes use of the `os.walk()` method to iterate through the entire set of Datetime folders (yyyymmddhh) and builds a list of date strings (of the same format) corresponding to the Datetime folders that contain client specific dfsu files.
+
+This is done by conditional statements that slice filepath strings in a brute-force manner to build said Datetime strings if the filepath of a dfsu file contains both the client name as well as a datetime string. Example of how this works:
+
+```python
+# Initializing api with root directory:
+test = file_query_api("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
+
+# Extracting list of date files that contain dfsu files for the client BP_TT:
+test_date_lst = test.get_client_dates('BPTT_Cipre')
+
+# -------Output-----------
+test_date_lst = ['2020041112', '2020041512', '2020041712']
+```  
+Note that these are not the Datetime folders that contain a sub-directory with the client name, but a list of Datetime folders that contain a sub-directory with the client name THAT ALSO contains dfsu files. For example in:
+```
+|- Datetime Folder
+|--- BP_TT Folder
+|--- Timeseries
+```
+The Datetime folder would not be added to the list as even though it contains a client name sub-folder, that sub-folder does not contain any actual dfsu files. The following Datetime folder would be added to the list however as it does contain a dfsu file:
+```
+|- Datetime Folder
+|--- BB_TT Folder
+|----- BP_TT_01.dfsu
+|----- BP_TT_02.dfsu
+|--- Timeseries
+```

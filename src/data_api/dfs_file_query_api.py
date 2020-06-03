@@ -122,6 +122,13 @@ class file_query_api(object):
         date_lst : list
             A list containing datetime strings of each date folder that contains
             client specific dfsu files.
+
+        Raises
+        ------
+        Exception : Exception
+            An error that occurs if a client name string is not correctly defined.
+            Halts the building of the date_lst as brute-force string slicing is no
+            longer possible.
         '''
         # Main empty list that will be built:
         date_lst = []
@@ -145,10 +152,9 @@ class file_query_api(object):
                     if len(timeseries) > 10:
 
                         # Raising Exection and break loop:
-                        warnings.warn("String slicing failed to extract exclusive datetime string.\
- Possible Issue with input client_name.")
+                        raise Exception("String slicing failed to extract exclusive datetime string.\
+ Possible Issue with input client_name parameter.")
 
-                        break
 
                     # Appending timeseries string to the main_list:
                     date_lst.append(timeseries)
