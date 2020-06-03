@@ -57,7 +57,7 @@ test_date_lst = test.get_client_dates('BPTT_Cipre')
 # -------Output-----------
 test_date_lst = ['2020041112', '2020041512', '2020041712']
 ```  
-Note that these are not the Datetime folders that contain a sub-directory with the client name, but a list of Datetime folders that contain a sub-directory with the client name THAT ALSO contains dfsu files. For example in:
+Note that these are not the Datetime folders that contain only a sub-directory with the client name, but a list of Datetime folders that contain a sub-directory with the client name THAT ALSO contain dfsu files. For example in:
 ```
 |- Datetime Folder
 |--- BP_TT Folder
