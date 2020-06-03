@@ -1,6 +1,7 @@
 # Importing the file directory navigation libraries:
 import os
 import sys
+import warnings
 
 
 # An object that is means to represent the file diectory containing dfs files:
@@ -101,17 +102,62 @@ class file_query_api(object):
 
         return dfs_filepaths
 
+    # Method that extracts all the dates in which the client folder is present:
+    def get_client_dates(self, client_name):
+        '''
+        This method uses the os.walk method to iterate through the list of all
+        yyyymmddhh file directories and builds a list of datetimes in which the
+        client_name sub-folder contains dfsu files. The end goal of this method
+        is to provide a means of creating an ordered timeseries of dfsu files.
 
+        Parameters
+        ----------
+        client_name : str
+            A string representing the name of the client of which the files are
+            being searched. It is critical that the client_name string be equal to
+            the flie name for the client sub-folder. See Docs for more info.
 
+        Returns
+        -------
+        date_lst : list
+            A list containing datetime strings of each date folder that contains
+            client specific dfsu files.
+        '''
+        # Main empty list that will be built:
+        date_lst = []
 
+        # Modifying root directory by adding \Results to main path:
+        results_dir = self.root_dir + "\\TT_HD\\Results"
 
+        # Iterating through the results_dir and building lists based on dfsu presence:
+        for pathname, dir_name_lst, file_name_lst  in os.walk(results_dir):
 
+            # Iterating through each filename searching for dfsu files:
+            for file in file_name_lst:
 
+                # Extracting the datetime folder string by brute-force string strip:
+                if ".dfsu" in file and client_name in pathname:
 
+                    # Brute force string stripping to modify pathname:
+                    timeseries = pathname.replace(f'\\{client_name}', '').replace(f'{results_dir}\\', '')
 
+                    # Conditional tha raises exception if string stripping fails:
+                    if len(timeseries) > 10:
+
+                        # Raising Exection and break loop:
+                        warnings.warn("String slicing failed to extract exclusive datetime string.\
+ Possible Issue with input client_name.")
+
+                        break
+
+                    # Appending timeseries string to the main_list:
+                    date_lst.append(timeseries)
+
+        return date_lst
 
 
 
 # Scripts for testing:
 test = file_query_api("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
-test.get_client_data('BBTT_Cipre', '202004')
+#test.get_client_data('BBTT_Cipre', '202004')
+print(test.get_client_dates('ALNG_North'))

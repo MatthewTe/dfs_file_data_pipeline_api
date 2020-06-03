@@ -2,10 +2,10 @@
 The data visualization package is written mainly using the plotly graphics library to create interactive plots on a web based application. Such as a Flask Dash application. The methods in the visualization script can be invoked to produce ready-made complicated plots based on the configuration of the methods.
 
 ## Table of Contents
-* ### dashboard()
-* #### plot_node_data()
-* #### create_timeseries()
-* #### create_polar_plot()
+* ### `dashboard()`
+* #### `plot_node_data()`
+* #### `create_timeseries()`
+* #### `create_polar_plot()`
 
 ## `dashboard(filepath)`
 The object used to generate ready-made dashboards us the `dashboard()` object. This object inherits from its parent class: the `dfsu_ingestion_engine()` and uses the dfsu_ingestion_engine API to call data from unstructured dfsu files. It then uses its methods to plot various dashboards.
