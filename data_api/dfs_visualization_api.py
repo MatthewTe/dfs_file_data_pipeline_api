@@ -408,18 +408,3 @@ class dashboard(dfsu_ingestion_engine):
                 )
 
         return barpolar_plot
-
-
-"""
-# Dash App for testing:
-app = dash.Dash()
-app.layout = html.Div([
-    dcc.Graph(figure=gis_model().map_fig)],
-    style = {
-        'width' : '100%',
-        'height' : '100%',
-        'display' : 'inline-block'
-        }
-    )
-app.run_server(debug=True)
-"""

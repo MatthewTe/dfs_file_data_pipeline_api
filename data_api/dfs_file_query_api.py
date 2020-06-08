@@ -160,10 +160,3 @@ class file_query_api(object):
                     date_lst.append(timeseries)
 
         return date_lst
-
-
-
-# Scripts for testing:
-test = file_query_api("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
-#test.get_client_data('BBTT_Cipre', '202004')
-print(test.get_client_dates('ALNG_North'))

@@ -274,18 +274,3 @@ class dfsu_ingestion_engine(mikeio.Dfsu):
         columns=[data_category])
 
         return slice_df
-
-'''
-# TODO:
-- Perform efficency optimization on the dfsu_ingestion_engine to reduce runtime/
-address bottleneck
-
-test_data = dfsu_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\concat-10april2019.dfsu")
-print(test_data.dataset.items)
-print(test_data.get_node_polar_coords(-63.08325873, 11.29754091, -2.322656))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Salinity'))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Temperature'))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Density'))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current direction'))
-print(test_data.get_node_data(-63.08325873, 11.29754091, -2.322656, 'Current speed'))
-'''
