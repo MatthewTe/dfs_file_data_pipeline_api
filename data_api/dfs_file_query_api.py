@@ -3,6 +3,8 @@ import os
 import sys
 import warnings
 
+# Importing data management packages:
+from datetime import datetime
 
 # An object that is means to represent the file diectory containing dfs files:
 class file_query_api(object):
@@ -31,7 +33,7 @@ class file_query_api(object):
         self.root_dir = root_dir
 
     # Method that queries the directory and returns dfs filepaths based on kwargs:
-    def get_client_data(self, client_name, date=None):
+    def get_client_data(self, client_name, date=None, file_type='.dfsu'):
         '''
         Method that searches the CDL directory structure for dfs files based on the
         client name parameter. The search can be further specified by the optional
@@ -51,6 +53,12 @@ class file_query_api(object):
             of the file structure: yyyymmddhh. The level of specificity of the
             date will determine the breath of the file path search. See Docs
 
+        file_type : str : default = '.dfsu'
+            A string that provides the method with the type of file extension
+            that will be retrieved. This is by default a dfsu file with the extension
+            '.dfsu' and theoretically could be any file extension but is primarily
+            designed to be used to extract DFS file paths such as '.dfsu' and '.dfs0'
+
         Return
         ------
         dfs_filepaths : list
@@ -69,14 +77,14 @@ class file_query_api(object):
             # Walking through Results dir and extracting all relevant data:
             for tuple in os.walk(start_path):
 
-                # If the client_name is found in the directory path:
-                if (client_name in tuple[0]):
+                # If a "Timeseries" sub-directory is found in the directory path:
+                if ('TimeSeries' in tuple[0]):
 
                     # Iterating through list of file names building list of dfsu paths:
                     for file_name in tuple[2]:
 
-                        # Adding dfsu file path to main list:
-                        if '.dfsu' in file_name:
+                        # Adding file path to main list:
+                        if file_type in file_name and client_name in file_name:
 
                             dfs_filepaths.append(os.path.join(tuple[0], file_name))
 
@@ -86,24 +94,23 @@ class file_query_api(object):
              # Walking through Results dir and extracting data based on date parm:
              for tuple in os.walk(start_path):
 
-                 # If a dir can be found that contains the date format given:
-                 if date in tuple[0]:
+                 # If a dir can be found that contains the date format given
+                 # and contains a "TimeSeries" sub folder:
+                 if date in tuple[0] and 'TimeSeries' in tuple[0]:
 
-                     # Now if file contains client name:
-                     if client_name in tuple[0]:
+                     # Iterating through list of file paths:
+                     for file_name in tuple[2]:
 
-                         for file_name in tuple[2]:
+                         # Now if file is the correct file type and contains client_name:
+                         if file_type in file_name and client_name in file_name:
 
-                             # Now if file is a dfsu file:
-                             if '.dfsu' in file_name:
-
-                                 # Adding filepaths to main list:
-                                 dfs_filepaths.append(os.path.join(tuple[0], file_name))
+                             # Adding filepaths to main list:
+                             dfs_filepaths.append(os.path.join(tuple[0], file_name))
 
         return dfs_filepaths
 
     # Method that extracts all the dates in which the client folder is present:
-    def get_client_dates(self, client_name):
+    def get_client_dates(self, client_name, file_type='.dfsu'):
         '''
         This method uses the os.walk method to iterate through the list of all
         yyyymmddhh file directories and builds a list of datetimes in which the
@@ -117,11 +124,18 @@ class file_query_api(object):
             being searched. It is critical that the client_name string be equal to
             the flie name for the client sub-folder. See Docs for more info.
 
+        file_type : str : default = '.dfsu'
+            A string that provides the method with the type of file extension
+            that the algorithm will use to search for date values. This is by
+            default a dfsu file with the extension '.dfsu' and theoretically could
+            be any file extension but is primarily designed to be used to extract
+            DFS file paths such as '.dfsu' and '.dfs0'
+
         Returns
         -------
         date_lst : list
             A list containing datetime strings of each date folder that contains
-            client specific dfsu files.
+            client specific files.
 
         Raises
         ------
@@ -136,27 +150,43 @@ class file_query_api(object):
         # Modifying root directory by adding \Results to main path:
         results_dir = self.root_dir + "\\TT_HD\\Results"
 
-        # Iterating through the results_dir and building lists based on dfsu presence:
+        # Iterating through the results_dir and building lists based on dfs presence:
         for pathname, dir_name_lst, file_name_lst  in os.walk(results_dir):
 
-            # Iterating through each filename searching for dfsu files:
-            for file in file_name_lst:
+            # If the date folder contains a "TimeSeries" sub-folder:
+            if "TimeSeries" in pathname:
 
-                # Extracting the datetime folder string by brute-force string strip:
-                if ".dfsu" in file and client_name in pathname:
+                # Iterating through list of files searching for filenames:
+                for file_name in file_name_lst:
 
-                    # Brute force string stripping to modify pathname:
-                    timeseries = pathname.replace(f'\\{client_name}', '').replace(f'{results_dir}\\', '')
+                    # If the client file is found with correct file type:
+                    if client_name in file_name and file_type in file_name:
 
-                    # Conditional tha raises exception if string stripping fails:
-                    if len(timeseries) > 10:
+                        # Stripping pathname of all other elements via brute-force:
+                        date_str = pathname.replace(f"{results_dir}\\", '').replace(f"\\TimeSeries", "")
 
-                        # Raising Exection and break loop:
-                        raise Exception("String slicing failed to extract exclusive datetime string.\
- Possible Issue with input client_name parameter.")
+                        # Appending all dates to the date_list lst:
+                        date_lst.append(date_str)
+
+        # Converting date_lst to a set to extract unique values. Re-converting set
+        # to list gives only unique strings:
+        dates_unique = list(set(date_lst))
+
+        # Converting list of unique date strings to datetime objects using list comprehension:
+        dates_unique = [
+            datetime.strptime(date_str, "%Y%m%d%H") for date_str in dates_unique
+            ]
+
+        # Sorting the list of datetime objects by recency:
+        dates_unique.sort()
 
 
-                    # Appending timeseries string to the main_list:
-                    date_lst.append(timeseries)
+        return dates_unique
 
-        return date_lst
+# Test:
+
+test = file_query_api("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
+
+for file in test.get_client_dates("BPTT_Cypre", '.dfs0'):
+
+    print(file)
