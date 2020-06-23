@@ -7,7 +7,6 @@ setuptools.setup(
     name="dfsu_api",
     version="0.0.1",
     author="MatthewTe",
-    author_email="teelucksingh.matthew1@gmail.com",
     description="An API that allows for the exploration/extraction of DHI dfsu files ",
     long_description=long_description,
     url="https://github.com/MatthewTe/dfsu_visualization_pipeline",
@@ -20,7 +19,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8"
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: OS Independent"
     ],
-    install_requires=['pandas', 'numpy', 'matplotlib', 'plotly', 'dash'] # TODO: Add Geopandas?
+    install_requires=['pandas', 'numpy', 'matplotlib', 'plotly', 'dash', 'mikeio']
 )

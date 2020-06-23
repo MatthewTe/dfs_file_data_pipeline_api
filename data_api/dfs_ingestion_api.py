@@ -30,10 +30,62 @@ class dfs0_ingestion_engine(mikeio.Dfs0):
 
         # Creating a dataframe from the dfs0 file and declaring it as an instace var:
         self.main_df = self.to_dataframe(self.filepath)
-        print(self.main_df.columns)
-        # TODO: Communicate with Ami about how data should be extracted from dataframe.
 
-# test =  dfs0_ingestion_engine("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\TT_HD_BPTT_Cypre_F120.dfs0")
+    # Method that appends a dataframe to the main instance of the dataframe:
+    def concat_df(self, dataframe):
+        '''
+        Method compares the format of the input dataframe to the dataframe generated
+        via the dfs0_ingestion_engine. If the formats match, the input dataframe
+        is appened to the main instance dataframe. The method does not return a
+        value, it modifies the instance dataframe: self.main_df.
+
+        Parameters
+        ----------
+        dataframe : pandas dataframe
+            This is the dataframe that will be appended onto the main dataframe.
+        '''
+        # Comparing the column names of the two dataframes:
+        main_df_col = list(self.main_df.columns)
+        input_df_col = list(dataframe.columns)
+
+        # If the column names are the same, perform dataframe concatination:
+        if main_df_col == input_df_col:
+
+            # Appending the input df to the instace dataframe:
+            print("[APPENDING]: Dataframe Concatination Successful")
+            self.main_df = self.main_df.append(dataframe)
+
+            # Re-Indexing the Dataframe to ensure it is ordered by timeseries:
+            self.main_df.sort_index(inplace=True)
+
+    # Method ingests multiple dataframes and performs the same concatination as
+    # concat_df() if all formatting conditions are met:
+    def concat_df_list(self, *args):
+        '''
+        Method is simply an iterative implementation of the concat_df() method.
+        It attempts to append every dataframe passed into the method to the instance
+        dataframe self.main_df.
+
+        Like concat_df() this method does not return a parameter. It modifies an
+        instace dataframe.
+
+        Parameters
+        ----------
+        *args : arguments
+            These arguments are intended to be dataframes as each of these inserted
+            arguments will attempt to appended each of the dataframes to the main
+            self.main_df
+        '''
+        for df in args:
+
+            # Wrapping appending logic in try catch if value passed is not dataframe:
+            try:
+
+                # Calling Conct method:
+                self.concat_df(df)
+
+            except:
+                pass
 
 
 class dfsu_ingestion_engine(mikeio.Dfsu):

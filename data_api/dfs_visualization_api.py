@@ -1,5 +1,5 @@
 # Importing data ingestion engine to access data from dfsu files:
-from dfs_ingestion_api import dfsu_ingestion_engine
+from * import dfs_ingestion_api.dfsu_ingestion_engine as dfsu_ingestion_engine
 # Importing data management packages:
 import math
 import pandas as pd
@@ -8,7 +8,6 @@ import json
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-import geopandas as gpd
 import matplotlib.pyplot as plt
 # Importing Dash library packages:
 import dash

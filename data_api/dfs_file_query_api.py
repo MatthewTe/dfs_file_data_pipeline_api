@@ -184,9 +184,10 @@ class file_query_api(object):
         return dates_unique
 
 # Test:
-
+"""
 test = file_query_api("C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
 
 for file in test.get_client_dates("BPTT_Cypre", '.dfs0'):
 
     print(file)
+"""
