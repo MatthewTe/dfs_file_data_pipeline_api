@@ -2,8 +2,8 @@
 This API is used to search for dfs file paths in the CDL HD DHI Model File Directory. This API operates within the context of a very rigid file directory structure. It was done in this way was the tradeoff of flexibility for simplicity and efficiency was well worth it.
 
 ## Table of Contents
-* ### File Directory Structure
-* ### `file_query_api()`
+* ### [File Directory Structure](placeholer)
+* ### [`file_query_api()`](placeholer)
 
 ## File Directory Structure
 The query api works given a path to a root directory where all DFS files are stored. This directory must conform to a very strict file structure, as this api has been designed with simplicity and efficiency as a priority over flexibility in its search. The directory structure for DFS files must follow the following structure:
@@ -70,3 +70,45 @@ test_date_lst = [ # List of unique, ordered datetime object.
       ]
 ```  
 As stated before only date folders that contain actual dfs files have their datetime appended to the list. It is not determined by the presence of a folder, but a presence of a file of the indicated file type. It should also be noted that every date value in the list is unique. If a folder contains multiple dfs files for the same client and with the same file type it is only written once to the list.
+
+### `get_dfs0_list(self, client_name)`
+This is the method that makes use of the `get_client_dates()` method to generate a list of path names based on the `client name` string. See the `get_client_dates()` documentation for that methods logic.
+
+The method then takes the path name list and iterates through it and converts each path into a dataframe via the `dfs0_ingestion_engine`. It then brute force strips the path string into a datetime object.
+
+This key-value pair of datetime object-dataframe is written into a dictionary in the format {datetime object : dataframe}. This is the dictionary that is returned by this method.
+
+Decision Flow Process:
+```python
+# Method is initialized:
+test = file_query_api("Path to root directory")
+test.get_dfs0_list('Client Name')
+
+# <---------------get_dfs0_list process----------------------------------->
+
+# Creating list of dfs0 path strings based on client name:
+dfs_list = self.get_client_data_paths(client_name, file_type='.dfs0')
+
+# Iterating through the list of file paths:
+for path in dfs_list:
+
+  # Initializing the dfs0 based on path and extract dataframe:
+  dfs0 = dfs0_ingestion_engine(path)
+  dfs0_df = dfs0.main_df
+
+  # Extract datetime object from striped string:
+  df_date = path.replace("rest of path to file that is not timeseries", '')
+  df_date = datetime.strptime(df_date, """%Y%m%d%H""")
+
+  # Adding a key-value pair to the dictionary:
+  path_dict[df_date] = dfs0_df
+
+# <----------------------Output of Method------------------------------------->
+# Dictionary containing key-value pairs {datetime object : dfs0 dataframe}
+path_dict = {
+  datetime.datetime(2020, 6, 18, 0, 0): dfs0_df1,
+  datetime.datetime(2020, 6, 19, 12, 0): dfs0_df2,
+                  .........
+  datetime.datetime(2020, 6, 20, 0, 0): dfs0_dfn
+    }  
+```  

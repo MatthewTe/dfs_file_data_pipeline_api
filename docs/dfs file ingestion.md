@@ -6,9 +6,9 @@ Data ingestion is done via the `dfsu_ingestion_engine()` object which inherits f
 methods of extracting data in formats that are easily readable in a non-GIS context. Data extracted by these methods via the input of longitude, latitude and a depth value (z-value) in some cases.  
 
 ## Table of Contents
-* ### `extract_data(self, data_category, element_index)`
-* ### `get_node_data(self, long, lat, depth, cat_name)`
-* ### `get_node_layers(self, long, lat)`
+* ### [`extract_data(self, data_category, element_index)`](placeholer)
+* ### [`get_node_data(self, long, lat, depth, cat_name)`](placeholer)
+* ### [`get_node_layers(self, long, lat)`](placeholer)
 
 ## Data Category Re-Mapping:
 **Note: An unknown error that occurs when using the mikeio `Dfsu` method to extract and read data from an unstructured dfsu file: The categories that are assigned to datasets are assigned incorrectly. This creates an issue when ingesting different dfsu files and as such the data categories need to be manually re-mapped.**
@@ -16,7 +16,8 @@ In the main ingestion engine the data is re-mapped using a dictionary that conta
 
 ```python
 # Declaring the re-mapping dict: {'Data we want':'Data from Dfsu() Dataset'}
-self.map_dict = {'Salinity':'Temperature',
+self.map_dict = {
+            'Salinity':'Temperature',
             'Temperature':'Density',
             'Density':'Current direction (Horizontal)',
             'Current direction':'Current speed',
