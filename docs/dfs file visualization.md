@@ -2,10 +2,10 @@
 The data visualization package is written mainly using the plotly graphics library to create interactive plots on a web based application. Such as a Flask Dash application. The methods in the visualization script can be invoked to produce ready-made complicated plots based on the configuration of the methods.
 
 ## Table of Contents
-* ### [`dashboard()`](placeholer)
-* #### [`plot_node_data()`](placeholer)
-* #### [`create_timeseries()`](placeholer)
-* #### [`create_polar_plot()`](placeholer)
+* ### [`dashboard()`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md#dashboardfilepath)
+* #### [`plot_node_data()`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md#plot_node_dataself-long-lat-depth)
+* #### [`create_timeseries()`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md#create_timeseriesself-long-lat-depth-plot_name)
+* #### [`create_polar_plot()`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md#create_polar_plotselflonglatdepthr_columntheta_column)
 
 ## `dashboard(filepath)`
 The object used to generate ready-made dashboards us the `dashboard()` object. This object inherits from its parent class: the `dfsu_ingestion_engine()` and uses the dfsu_ingestion_engine API to call data from unstructured dfsu files. It then uses its methods to plot various dashboards.
