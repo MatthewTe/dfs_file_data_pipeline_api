@@ -2,8 +2,8 @@
 This API is used to search for dfs file paths in the CDL HD DHI Model File Directory. This API operates within the context of a very rigid file directory structure. It was done in this way was the tradeoff of flexibility for simplicity and efficiency was well worth it.
 
 ## Table of Contents
-* ### [File Directory Structure](placeholer)
-* ### [`file_query_api()`](placeholer)
+* ### [File Directory Structure](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20query%20api.md#file-directory-structure-1)
+* ### [`file_query_api()`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20query%20api.md#file_query_apiroot_dir)
 
 ## File Directory Structure
 The query api works given a path to a root directory where all DFS files are stored. This directory must conform to a very strict file structure, as this api has been designed with simplicity and efficiency as a priority over flexibility in its search. The directory structure for DFS files must follow the following structure:
