@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dfsu_api",
-    version="0.0.1",
+    version="0.0.3",
     author="MatthewTe",
     description="An API that allows for the exploration/extraction of DHI dfsu files ",
     long_description=long_description,
