@@ -119,7 +119,7 @@ This is the first custom file query algorithm that extracts file paths in a mann
 Forecasting data is written into the file directory as dfs0 files. A series of these dfs0 files are written into each TimeSeries folder based on the date and hour they are generated. Each of the dfs0 files in a single TimeSeries folder is written with a corresponding 'F-Value'. This F-Value dictates how far ahead model has forecasted in the dfs0. Eg: A dfs0 file with the F-Value `F036` would contain 36-hour forecasting data.
 
 Forecasting data is generated from the HD Model and written to the file directory according to the following schema:
-![ERROR: Image Not Found](placeholder)
+![ERROR: Image Not Found](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/resources/Forecasting%20Model%20Doc.jpeg)
 
 Example of a TimeSeries folder of forecast dfs0s:
 ```
