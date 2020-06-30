@@ -51,8 +51,8 @@ class dfs0_pipeline(object):
         self.c = self.con.cursor()
 
         # Creating the sql table to store meta-data about each dfs0 total concatination:
-        self.c.execute("""
-            CREATE TABLE IF NOT EXISTS Dfs0_Dates (
+        self.c.execute(f"""
+            CREATE TABLE IF NOT EXISTS {self.client_name}_Dfs0_Dates (
                 TimeSeries TEXT Primary Key)""")
 
         self.con.commit()
@@ -81,7 +81,7 @@ class dfs0_pipeline(object):
         # Extracting a list of datetime objects from the sqlite database:
         written_dates = [
             datetime.strptime(date_str[0], "%Y%m%d%H") for date_str in
-            self.c.execute("SELECT TimeSeries from Dfs0_Dates")]
+            self.c.execute(f"SELECT TimeSeries from {self.client_name}_Dfs0_Dates")]
 
         print(f'[DATES ALREADY WRITTEN]: {written_dates}')
 
@@ -98,53 +98,90 @@ class dfs0_pipeline(object):
         # Creating an empty dict to be populated with {date_str : dfs0_df}:
         current_dfs0_dict = {}
 
-        # Calling file_query_api to extract client dfs0 path strings for new_dates:
-        for date in new_dates:
+        # If no new dates are found, output as such and pass concatination:
+        if len(new_dates) > 0:
 
-            # Calling file query api:
-            dfs0_path  = self.dfs0_directory.get_client_data_paths(self.client_name,
-             date, '.dfs0')
+            # Calling file_query_api to extract client dfs0 path strings for new_dates:
+            for date in new_dates:
 
-             # Try catch to initalize each path w/ dfs0_ingestion_engine and build dict:
-            try:
-                dfs0_df = dfs0_ingestion_engine(dfs0_path[0]).main_df
+                # Calling file query api:
+                dfs0_path  = self.dfs0_directory.get_client_data_paths(self.client_name,
+                 date, '.dfs0')
 
-                # Adding key-value pair to dict:
-                current_dfs0_dict[date] = dfs0_df
+                 # Try catch to initalize each path w/ dfs0_ingestion_engine and build dict:
+                try:
+                    dfs0_df = dfs0_ingestion_engine(dfs0_path[0]).main_df
 
-            except:
-                # TODO: Add Warning
-                pass
+                    # Adding key-value pair to dict:
+                    current_dfs0_dict[date] = dfs0_df
 
-        # Building a list of all dataframes from the current_dfs0_dict:
-        df_list = [current_dfs0_dict[date] for date in current_dfs0_dict]
+                except:
+                    # TODO: Add Warning
+                    pass
 
-        # Concatinating the df_list into a single dataframe:
-        concat_df = pd.concat(df_list)
+            # Building a list of all dataframes from the current_dfs0_dict:
+            df_list = [current_dfs0_dict[date] for date in current_dfs0_dict]
 
-        # Writing the pandas dataframe to the sqlite database:
-        concat_df.to_sql(f'{self.client_name}_dfs0', self.con)
+            # Concatinating the df_list into a single dataframe:
+            concat_df = pd.concat(df_list)
 
-        print(f'[CLIENT DATA WRITTEN TO DATABASE]: {self.client_name}')
+            # Creating a sqlite3 database table
 
-        # Iterating through the lists of dates, writing values to the database:
-        for date in new_dates:
+            # Writing the pandas dataframe to the sqlite database:
+            concat_df.to_sql(f'{self.client_name}_dfs0', self.con, if_exists='append',
+                index=True, index_label='Date')
 
-            self.c.execute(
-            """INSERT INTO Dfs0_Dates(TimeSeries)
-                VALUES(:date)""", {'date':date})
+            print(f'[CLIENT DATA WRITTEN TO DATABASE]: {self.client_name}')
 
-            print(f'[DATE WRITTEN TO DATABASE]: {date}')
+            # Iterating through the lists of dates, writing values to the database:
+            for date in new_dates:
 
-        self.con.commit()
+                self.c.execute(
+                f"""INSERT INTO {self.client_name}_Dfs0_Dates(TimeSeries)
+                    VALUES(:date)""", {'date':date})
+
+                print(f'[DATE WRITTEN TO DATABASE]: {date}')
+
+            self.con.commit()
+
+
+        else:
+
+            print('[NO NEW DATES FOUND]: Concatination Not Avalible')
+
+            return
 
 # <--------------------------Query Methods------------------------------------->
 
-    # Method that returns a dataframe of the client data TimeSeries:
-    # TODO: Write dataframe query section.
+    # Method that returns the whole dataframe of the client data TimeSeries:
+    def get_client_data(self):
+        '''
+        Method that makes use of the pandas sql query api to read the client database
+        table to a fully formatted dataframe. This method would primarily be used
+        as an api for a visualization method.
+
+        Returns
+        -------
+        client_df : pandas dataframe
+            The dataframe containing data extracted from the client data table via
+            the pandas sql api. This dataframe is formatted under the assumption
+            of a date index.
+        '''
+        # Extracting the dataframe from the sqlite table:
+        client_df = pd.read_sql(f"SELECT * FROM {self.client_name}_dfs0", self.con)
+
+        # Converting index to datetime index:
+        client_df.set_index('Date', inplace=True)
+
+        # Converting index to a datetime index:
+        client_df.index = pd.to_datetime(client_df.index)
+
+        return client_df
 
 
 # Test:
 root_dir = "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT"
-test = dfs0_pipeline('BGTT_ALNG_F036', root_dir, ':memory:')
+database_path = "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT\\test_db"
+test = dfs0_pipeline('BGTT_ALNG_F036', root_dir, database_path)
 test.update_client_timeseries()
+print(test.get_client_data())

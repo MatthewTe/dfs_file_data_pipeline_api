@@ -35,6 +35,11 @@ class file_query_api(object):
         # Path of the root diretory:
         self.root_dir = root_dir
 
+        # Path of the results sub-directory:
+        self.results_dir = self.root_dir + "\\TT_HD\\Results"
+
+# <-------------------------------General File Query Methods------------------->
+
     # Method that queries the directory and returns dfs filepaths based on kwargs:
     def get_client_data_paths(self, client_name, date=None, file_type='.dfsu'):
         '''
@@ -237,3 +242,70 @@ class file_query_api(object):
             path_dict[df_date] = dfs0_df
 
         return path_dict
+
+# <-----------------------------Specific File Search Algorithms---------------->
+
+    # Method that performs the file search for 7-day forcecasting data:
+    def get_seven_day_forcast_files(self, client_name):
+        '''
+        This method implements the Seven Day Forecasting File search algorithm to
+        buid a dictionary of the most recent 7-day forcasting dfs0 data for a
+        client in the CDL file directory. See Documentation for full description.
+
+        Parameters
+        ----------
+        client_name : str
+            This is the client name string that will be used to search the file
+            directory for client_specific dfs0 files.
+
+        Returns
+        -------
+        forecast_dict : dict
+            A dictionary containing all the forecasting data for the client within the
+            7-day period. It is stored as key-value pairs of
+            {'TimeSeries value': 'dfs0 File Path'}.
+        '''
+        # Creating the empty forecast_dict to be built {TimeSeries: dfs0 path}:
+        forecast_dict = {}
+
+        # Iterating through the results directory using os.walk:
+        for pathname, dir_name_lst, file_name_lst in os.walk(self.results_dir):
+
+            # Building a list of dfs0 file names for a specific client:
+            client_name_lst = [
+                path_name for path_name in file_name_lst if client_name in path_name]
+
+            # If the client_name_lst > 0 then continue logic:
+            if len(client_name_lst) > 0:
+
+                f_values = [
+                    # Stripping the file name string and extracting f-value as int:
+                    int(file_name.replace('.dfs0','')[-3:]) for file_name in
+                        client_name_lst
+                        ]
+
+                # Creating an indicator dict to create searchable key-value pairs
+                # of {F-Value int: path string}:
+                f_val_dict = dict(zip(f_values, client_name_lst))
+                lowest_f_val = min(f_values)
+
+                # Using the f_val_dict to extract the path of the smallest F-Value:
+                f_val_name = f_val_dict[lowest_f_val]
+
+                # Debug print:
+                print(f'[MOST RECENT F-VALUE]: {lowest_f_val}')
+                print(f'[MOST RECENT FILE]: {f_val_name}\n')
+
+                if "TimeSeries" in pathname:
+                    # Extracting TimeSeries string value from pathname:
+                    date_val = pathname.replace(f"{self.results_dir}\\", '').replace(f"\\TimeSeries", "")
+
+                    # Building the path to the dfs0 file:
+                    f_val_path = os.path.join(pathname, f_val_name)
+
+                    # Building key-values in the Forecast Dictionary:
+                    forecast_dict[date_val] = f_val_path
+
+            else: pass
+
+        return forecast_dict

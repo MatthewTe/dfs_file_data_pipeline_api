@@ -112,3 +112,56 @@ path_dict = {
   datetime.datetime(2020, 6, 20, 0, 0): dfs0_dfn
     }  
 ```  
+
+### `get_seven_day_forcast_files(self, client_name)`
+This is the first custom file query algorithm that extracts file paths in a manner that is consistent with how 7-day point forecasting data is written into the file directory by the HD model.
+
+Forecasting data is written into the file directory as dfs0 files. A series of these dfs0 files are written into each TimeSeries folder based on the date and hour they are generated. Each of the dfs0 files in a single TimeSeries folder is written with a corresponding 'F-Value'. This F-Value dictates how far ahead model has forecasted in the dfs0. Eg: A dfs0 file with the F-Value `F036` would contain 36-hour forecasting data.
+
+Forecasting data is generated from the HD Model and written to the file directory according to the following schema:
+![ERROR: Image Not Found](placeholder)
+
+Example of a TimeSeries folder of forecast dfs0s:
+```
+- TT_HD_BPTT_Cypre_F000.dfs0
+- TT_HD_BPTT_Cypre_F012.dfs0
+- TT_HD_BPTT_Cypre_F024.dfs0
+- TT_HD_BPTT_Cypre_F036.dfs0
+```
+This file search algorithm iterates through the file directory and generates a dictionary containing the `{'TimeSeries Value':'dfs0 file path'}`.
+
+The algorithm follows the following steps:
+```
+- Iterates through the 'Results' file directory.
+  |
+  |- Extracting a list of all 'TimeSeries' Folders.
+  |
+  |- Iterating through each TimeSeries Folder:
+    |- Creating a list of all client dfs0 file names
+    |
+    |- Extract a list of F-Values from the client file name list.
+    |
+    |- Create a dictionary out of the two lists: {F-Value : Corresponding dfs0 file path}
+    |
+    |- Using the F-Value Dictionary to select the Corresponding dfs0 file path for the smallest F-Value in the F-Values list.
+    |
+    |- Extract the 'TimeSeries' string from the TimeSeries Folder path name
+    |- Add the key-value pair of {"TimeSeries String" : "Smallest F-Value File Path"} to the main dictionary 'forecast_dict'
+  |
+  |- Return 'forecast_dct' dictionary
+```
+As stated in the algorithm description this method returns a dictionary of `{"TimeSeries String" : "Smallest F-Value File Path"}`. The intended purpose of this method is to serve as an api for the main pipeline visualization methods or to be passed on to a dfs0 concatenation method.
+
+Example output:
+```python
+# Calling file query api and get_seven_day_forcast_files algorithm:
+test = file_query_api('Path to Root Directory')
+test.get_seven_day_forcast_files('TT_HD_BPTT_Cypre')
+
+# <--------------------------------------------Output------------------------------------------------->
+{
+'2020061800':'C:\\WaterForecastTT\\TT_HD\\Results\\2020061800\\TimeSeries\\TT_HD_BPTT_Cypre_F000.dfs0', '2020061812':'C:\\WaterForecastTT\\TT_HD\\Results\\2020061812\\TimeSeries\\TT_HD_BPTT_Cypre_F012.dfs0',
+
+'2020061900':'C:\\WaterForecastTT\\TT_HD\\Results\\2020061900\\TimeSeries\\TT_HD_BPTT_Cypre_F024.dfs0'
+}
+```
