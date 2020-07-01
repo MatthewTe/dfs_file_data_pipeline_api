@@ -5,10 +5,8 @@ MIKE ZERO. Using the DHI python library [mikeio](https://github.com/DHI/mikeio) 
 Data ingestion is done via the script `dfs_ingestion_api.py` script, which contains several python objects for interacting with DHI's dfs files in a pythonic manner through the `mikeio` api.  
 
 ## Table of Contents
-* [`dfs0_ingestion_engine`](placeholder)
-  * #### [`concat_df`](placeholder)
-  * #### [`concat_df`](placeholder)
-* ### [`dfsu_ingestion_engine`](placeholder)
+* ### [`dfs0_ingestion_engine`](https://github.com/MatthewTe/dfs_file_data_pipeline_api/blob/master/docs/dfs%20file%20ingestion.md#dfs0_ingestion_enginefilepath)
+* ### [`dfsu_ingestion_engine`](https://github.com/MatthewTe/dfs_file_data_pipeline_api/blob/master/docs/dfs%20file%20ingestion.md#dfsu_ingestion_enginefilepath)
  * #### [`extract_data(self, data_category, element_index)`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md#extract_dataself-data_category-element_index-1)
  * #### [`get_node_data(self, long, lat, depth, cat_name)`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md#get_node_dataself-long-lat-depth-cat_name-1)
  * #### [`get_node_layers(self, long, lat)`](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md#get_node_layersself-long-lat-1)
