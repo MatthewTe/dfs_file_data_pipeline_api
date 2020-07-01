@@ -34,154 +34,92 @@ class dfs0_pipeline(object):
         HD Model output files are stored / written to. This is the root_dir string
         that will be used to initalize the file_query_api method.
 
-    database_path : str
-        This path string represents the path to a sqlite database file on the system.
-        It will either be used to create a sqilte database if none exists and once the
-        database doese exist ot establishes a connection object with that database.
-        Allowing data to be read and written to the database.
     """
-    def __init__(self, client_name, root_dir, database_path):
+    def __init__(self, client_name, root_dir):
 
         # Declaring instance variables:
         self.client_name = client_name
         self.root_dir = root_dir
 
-        # Creating an instance of a sqlite connection and cursor object:
-        self.con = sqlite3.connect(database_path)
-        self.c = self.con.cursor()
+        # Initalizing the file query api object as an instance variable:
+        self.file_query = file_query_api(self.root_dir)
 
-        # Creating the sql table to store meta-data about each dfs0 total concatination:
-        self.c.execute(f"""
-            CREATE TABLE IF NOT EXISTS {self.client_name}_Dfs0_Dates (
-                TimeSeries TEXT Primary Key)""")
+# <----------------------------7-Day Forecast building methods----------------->
 
-        self.con.commit()
-
-        # Initalizing an instance file query api object:
-        self.dfs0_directory = file_query_api(self.root_dir)
-
-# <---------------------------Writing Methods---------------------------------->
-
-    # Method that contains the logic that concats all client dfs0's into single TimeSeries:
-    def update_client_timeseries(self):
+    # Method that builds a dataframe containing 7-Day Forcasting data:
+    def build_seven_day_forecast_data(self):
         '''
-        This method contains all the logic necessary to maintain the database
-        table containing the continuous client timeseries.
+        This method makes uses of the get_seven_day_forcast_files() method in the
+        file query api to build a pandas dataframe containing the TimeSeries data
+        for the seven day forecast.
 
-        It extracts a list of date strings from the summary database table `Dfs0_Dates`
-        that represent the Dfs0 files that have already been concatinated and written
-        to the database. The file query api is then called and extracts a list of
-        all date strings avalible in the file directory.
-
-        These two lists are compared and every date that has not been previously
-        written to the db is then used to extract the corresponding dfs0 file.
-        These files are then concatinated into a larger timeseries and written
-        to the database, appended to the existing data.
-        '''
-        # Extracting a list of datetime objects from the sqlite database:
-        written_dates = [
-            datetime.strptime(date_str[0], "%Y%m%d%H") for date_str in
-            self.c.execute(f"SELECT TimeSeries from {self.client_name}_Dfs0_Dates")]
-
-        print(f'[DATES ALREADY WRITTEN]: {written_dates}')
-
-        # Extracting a list of datetime objects from the file query api:
-        directory_dates = self.dfs0_directory.get_client_dates(self.client_name, '.dfs0')
-
-        # Creating a list of unique date strings from directory_dates not in written_dates:
-        new_dates = [
-            date.strftime("%Y%m%d%H") for date in directory_dates
-                if date not in written_dates]
-
-        print(f'[NEW DATES]: {new_dates}')
-
-        # Creating an empty dict to be populated with {date_str : dfs0_df}:
-        current_dfs0_dict = {}
-
-        # If no new dates are found, output as such and pass concatination:
-        if len(new_dates) > 0:
-
-            # Calling file_query_api to extract client dfs0 path strings for new_dates:
-            for date in new_dates:
-
-                # Calling file query api:
-                dfs0_path  = self.dfs0_directory.get_client_data_paths(self.client_name,
-                 date, '.dfs0')
-
-                 # Try catch to initalize each path w/ dfs0_ingestion_engine and build dict:
-                try:
-                    dfs0_df = dfs0_ingestion_engine(dfs0_path[0]).main_df
-
-                    # Adding key-value pair to dict:
-                    current_dfs0_dict[date] = dfs0_df
-
-                except:
-                    # TODO: Add Warning
-                    pass
-
-            # Building a list of all dataframes from the current_dfs0_dict:
-            df_list = [current_dfs0_dict[date] for date in current_dfs0_dict]
-
-            # Concatinating the df_list into a single dataframe:
-            concat_df = pd.concat(df_list)
-
-            # Creating a sqlite3 database table
-
-            # Writing the pandas dataframe to the sqlite database:
-            concat_df.to_sql(f'{self.client_name}_dfs0', self.con, if_exists='append',
-                index=True, index_label='Date')
-
-            print(f'[CLIENT DATA WRITTEN TO DATABASE]: {self.client_name}')
-
-            # Iterating through the lists of dates, writing values to the database:
-            for date in new_dates:
-
-                self.c.execute(
-                f"""INSERT INTO {self.client_name}_Dfs0_Dates(TimeSeries)
-                    VALUES(:date)""", {'date':date})
-
-                print(f'[DATE WRITTEN TO DATABASE]: {date}')
-
-            self.con.commit()
-
-
-        else:
-
-            print('[NO NEW DATES FOUND]: Concatination Not Avalible')
-
-            return
-
-# <--------------------------Query Methods------------------------------------->
-
-    # Method that returns the whole dataframe of the client data TimeSeries:
-    def get_client_data(self):
-        '''
-        Method that makes use of the pandas sql query api to read the client database
-        table to a fully formatted dataframe. This method would primarily be used
-        as an api for a visualization method.
+        The method iterates through the dictionary of dfs0 paths, generates a list
+        of those paths within seven days using the date string keys of the dict.
+        The method then initalizes all the dfs0 paths using the dfs0 ingestion
+        engine and concatinates all the dfs0 dataframes into a single dataframe.
 
         Returns
         -------
-        client_df : pandas dataframe
-            The dataframe containing data extracted from the client data table via
-            the pandas sql api. This dataframe is formatted under the assumption
-            of a date index.
+        forecast_df : pandas dataframe
+            The dataframe containing all the forecasting data. This is generated
+            as the result of dataframe list concatenation.
+
+        Raises
+        ------
+        ValueError : ValueError
+            The error that is raised at the end of the method when no dataframes
+            are found to be concatinated.
         '''
-        # Extracting the dataframe from the sqlite table:
-        client_df = pd.read_sql(f"SELECT * FROM {self.client_name}_dfs0", self.con)
+        # Initalizing the file query api to get seven day forecasting dict:
+        forecast_dict = self.file_query.get_seven_day_forcast_files(self.client_name)
 
-        # Converting index to datetime index:
-        client_df.set_index('Date', inplace=True)
+        # Creating a datetime object of the current date in the format of TimeSeries dates:
+        current_date = datetime.today()
 
-        # Converting index to a datetime index:
-        client_df.index = pd.to_datetime(client_df.index)
+        print('[CURRENT DATE USED AS START POINT FOR FILE QUERY]:', current_date)
 
-        return client_df
+        # Creating a list of datetime object from the forecast_dict keys:
+        date_lst = [
+            datetime.strptime(date_key, "%Y%m%d%H") for date_key in forecast_dict]
+
+        # Slicing date_lst for date values only seven days ahead of current_date
+        # and re-converting them to strings:
+        forecast_date_lst = [
+
+            # > 0 to filter out negative values:
+            date for date in date_lst if (date - current_date).days <= 7 and
+            (date - current_date).days > 0
+            ]
+
+        # Sorting forecast_date_lst to enusre data integrety, not strictly necessary:
+        forecast_date_lst.sort()
+
+        # Converting dates in forecast_date_lst to strings to be used as keys:
+        forecast_date_lst = [date.strftime("%Y%m%d%H") for date in forecast_date_lst]
+
+        print('[LIST OF TIMESERIES TO BE CONCATINATED FOR FORECAST]:', forecast_date_lst)
+
+        # Creating a list of dfs0 dataframes from paths in forecast_dict:
+        forecast_df_lst = [
+
+            # forecaast[date_key] == path to dfs0 file (see file_query_api)
+            dfs0_ingestion_engine(forecast_dict[date_key]).main_df for date_key in
+            forecast_date_lst
+            ]
+
+        # Error handeling:
+        try:
+            # Concatinating list of dataframes into main df:
+            forecast_df = pd.concat(forecast_df_lst)
+
+            return forecast_df
+
+        except ValueError: # If the forecast_df_lst is empty:
+
+            print('\n![NO FILES FOUND CONFORMING TO CONCATINATION SPECIFICATIONS]!')
+
 
 
 # Test:
-root_dir = "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT"
-database_path = "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT\\test_db"
-test = dfs0_pipeline('BGTT_ALNG_F036', root_dir, database_path)
-test.update_client_timeseries()
-print(test.get_client_data())
+#test = dfs0_pipeline('TT_HD_BPTT_Cypre', "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
+#print(test.build_seven_day_forecast_data())

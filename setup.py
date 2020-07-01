@@ -4,12 +4,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="dfsu_api",
-    version="0.0.3",
+    name="dfs_pipeline_api",
+    version="0.1.0",
     author="MatthewTe",
     description="An API that allows for the exploration/extraction of DHI dfsu files ",
     long_description=long_description,
-    url="https://github.com/MatthewTe/dfsu_visualization_pipeline",
+    url="https://github.com/MatthewTe/dfs_file_data_pipeline_api",
     packages=setuptools.find_packages(),
     classifiers=[
         "Development Status :: - Alpha",
