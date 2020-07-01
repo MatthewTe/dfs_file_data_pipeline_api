@@ -4,13 +4,13 @@ output of a DHI hydrodynamic model (.dfs mesh files) to a web api that serves an
 the data.
 
 ## Table of Contents
-* ### [Requirements/Installation Instructions](placeholder)
-* ### [Pipelines](placeholder)
+* ### [Requirements/Installation Instructions](https://github.com/MatthewTe/dfs_file_data_pipeline_api#requirements)
+* ### [Pipelines](https://github.com/MatthewTe/dfs_file_data_pipeline_api#pipeline-designs)
 * ### Documentation
   * #### [DFS Visualization API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20visualization.md)
   * #### [DFS File Ingestion API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20ingestion.md)
   * #### [DFS File Query API](https://github.com/MatthewTe/dfsu_visualization_pipeline/blob/master/docs/dfs%20file%20query%20api.md)
-  * #### [Pipeline API](placeholder)
+  * #### [Pipeline API](https://github.com/MatthewTe/dfs_file_data_pipeline_api/blob/master/docs/dfs%20pipeline%20api.md)
 
 ## Requirements
 The python package containing the pipeline apis can be installed via the pip package manager using the conventional pip install commands for installing git repositories:
@@ -30,6 +30,6 @@ This was the initial pipeline that the library was created for. The goal was to 
 
 The model outputs (accurately) a seven day future-forecast of hydro-data. It writes this data into a file directory with a pre-determined directory structure. The pipeline api object when called, should search the file structure for the appropriate files in the correct order and concatenate all dfs0 files into a single, plottable timeseries in a scheduled batch process (see pipeline_api Documentation for in-depth detail of how this process works). The abstract structure of this pipeline would be as follows:
 
-![IMAGE NOT FOUND](placeholder)  
+![IMAGE NOT FOUND](https://github.com/MatthewTe/dfs_file_data_pipeline_api/blob/master/resources/DFS0%20Seven%20Day%20Forecast%20Pipeline%20Structure.png)  
 
 **Note: These pipelines are not built in this package. This package contains the methods and apis to implement these pipelines. These pipeline descriptions are to give more context to the package as it shows the processes that these scripts were created for.*
