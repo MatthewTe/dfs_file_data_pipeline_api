@@ -4,8 +4,8 @@ import sys
 import warnings
 
 # Importing the dfs ingestion api: # NOTE: For Production
-#from * import dfs_ingestion_api.dfs0_ingestion_engine as dfs0_ingestion_engine
-from dfs_ingestion_api import dfs0_ingestion_engine # NOTE: For development
+from * import dfs_ingestion_api.dfs0_ingestion_engine as dfs0_ingestion_engine
+#from dfs_ingestion_api import dfs0_ingestion_engine # NOTE: For development
 
 # Importing data management packages:
 from datetime import datetime
