@@ -10,7 +10,7 @@ setuptools.setup(
     description="An API that allows for the exploration/extraction of DHI dfsu files ",
     long_description=long_description,
     url="https://github.com/MatthewTe/dfs_file_data_pipeline_api",
-    packages=setuptools.find_packages(),
+    packages=['data_api'],
     classifiers=[
         "Development Status :: - Alpha",
         "Topic :: Data Science :: Pipeline API",
