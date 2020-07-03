@@ -1,5 +1,5 @@
 # Importing data ingestion engine to access data from dfsu files:
-from * import dfs_ingestion_api.dfsu_ingestion_engine as dfsu_ingestion_engine
+from data_api.dfs_ingestion_api import dfsu_ingestion_engine
 # Importing data management packages:
 import math
 import pandas as pd
