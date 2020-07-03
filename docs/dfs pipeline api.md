@@ -10,12 +10,17 @@ This is the pipeline object that contains all the methods necessary to maintain 
 
 When initialized the pipeline object initializes a `file_query_api object` via the root directory parameter.
 
-#### `build_seven_day_forecast_data(self)`
+#### `build_seven_day_forecast_data(self date=None)`
 This method when called, returns a pandas dataframe of all available data generated for the seven-day-forecast model by the DHI HD model.
+
+The `date` parameter is a tuple of date (year, day, month). It is used to create the `current_date` variable that is used as the starting point of the
+seven day file search-concatenation algo. This parameter is mainly used for
+back-testing and development.
 
 The method does this by using the `file_query_api's get_seven_day_forcast_files()` with the client name used to initalize the pipeline method. This method (see file query documentation) generates a dictionary of TimeSeries strings and associated dfs0 paths. The method then parses this dictionary; extracting the dfs0 path strings that have an associated TimeSeries date string that is greater than the current date the method is run but less than or equal to the date +7 days.
 
 In other words the method builds a list of forecast dfs0 paths ordered by date from 1-day forecast to 7-day forecast using the dfs0 with the date closest to the current date as a starting point. Once this list has been built the method then initializes all these dfs0 paths as pandas dataframes via the `dfs0_ingestion_engine` and concatenates these dataframes into a single dataframe.  
+
 
 Example:
 ```python

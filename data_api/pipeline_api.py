@@ -1,6 +1,11 @@
 # Importing all dfs apis:
-from dfs_file_query_api import file_query_api
-from dfs_ingestion_api import dfs0_ingestion_engine
+# API Imports for production:
+from * import dfs_file_query_api.file_query_api as file_query_api
+from * import dfs_ingestion_api.dfs0_ingestion_engine as dfs0_ingestion_engine
+
+# API Imports for development:
+#from dfs_file_query_api import file_query_api
+#from dfs_ingestion_api import dfs0_ingestion_engine
 
 # Importing data management packages:
 import pandas as pd
@@ -47,7 +52,7 @@ class dfs0_pipeline(object):
 # <----------------------------7-Day Forecast building methods----------------->
 
     # Method that builds a dataframe containing 7-Day Forcasting data:
-    def build_seven_day_forecast_data(self):
+    def build_seven_day_forecast_data(self, date=None):
         '''
         This method makes uses of the get_seven_day_forcast_files() method in the
         file query api to build a pandas dataframe containing the TimeSeries data
@@ -57,6 +62,15 @@ class dfs0_pipeline(object):
         of those paths within seven days using the date string keys of the dict.
         The method then initalizes all the dfs0 paths using the dfs0 ingestion
         engine and concatinates all the dfs0 dataframes into a single dataframe.
+
+        Parameters
+        ----------
+        date : tuple
+            A tuple that by default is None. If the tuple is input, it must be in
+            the form (year, month, day) as integers. It is used to create the
+            'current_date' varable that is used as the starting point of the
+            seven day file search-concatenation algo. This parameter is mainly
+            used for back-testing and development.
 
         Returns
         -------
@@ -73,8 +87,21 @@ class dfs0_pipeline(object):
         # Initalizing the file query api to get seven day forecasting dict:
         forecast_dict = self.file_query.get_seven_day_forcast_files(self.client_name)
 
-        # Creating a datetime object of the current date in the format of TimeSeries dates:
-        current_date = datetime.today()
+        # If a date tuple is given as an input:
+        if date != None:
+
+            # Unpacking the tuple:
+            (year, month, day) = date
+
+            # Initalizing the datetime object with the tuple parameters:
+            current_date = datetime(year, day, month)
+
+        else: # If the date is none:
+
+            # Creating a datetime object of the current date in the format of TimeSeries dates:
+            current_date = datetime.today() # Current Date var for Production
+
+
 
         print('[CURRENT DATE USED AS START POINT FOR FILE QUERY]:', current_date)
 
@@ -117,9 +144,3 @@ class dfs0_pipeline(object):
         except ValueError: # If the forecast_df_lst is empty:
 
             print('\n![NO FILES FOUND CONFORMING TO CONCATINATION SPECIFICATIONS]!')
-
-
-
-# Test:
-#test = dfs0_pipeline('TT_HD_BPTT_Cypre', "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
-#print(test.build_seven_day_forecast_data())
