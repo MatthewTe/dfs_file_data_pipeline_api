@@ -10,7 +10,7 @@ This is the pipeline object that contains all the methods necessary to maintain 
 
 When initialized the pipeline object initializes a `file_query_api object` via the root directory parameter.
 
-#### `build_seven_day_forecast_data(self date=None)`
+#### `build_seven_day_forecast_data(self, date=None)`
 This method when called, returns a pandas dataframe of all available data generated for the seven-day-forecast model by the DHI HD model.
 
 The `date` parameter is a tuple of date (year, day, month). It is used to create the `current_date` variable that is used as the starting point of the
@@ -28,5 +28,12 @@ test = dfs0_pipeline('TT_HD_BPTT_Cypre', "Path to root directory")
 test.get_seven_day_forcast_files()
 
 # <-----------------------------------Output----------------------------------->
-
 ```
+
+#### `write_csv(self, df, file_name)`
+This is a basic method that allows the concatenated dataframes generated from the `"build"` methods to be written as a .csv file.
+
+The csv file is written to the main directory folder `WaveForecastTT`. The path
+can be further specified by implementing additional path string to the `file_name` input parameter.
+
+**Note: This `write_csv` method is instance specific and as such is intended to be used within a unique instance of a dfs0 pipeline object.** 

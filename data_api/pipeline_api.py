@@ -3,9 +3,8 @@
 from data_api.dfs_file_query_api import file_query_api
 from data_api.dfs_ingestion_api import dfs0_ingestion_engine
 
-# API Imports for development:
-#from dfs_file_query_api import file_query_api
-#from dfs_ingestion_api import dfs0_ingestion_engine
+# Importing path management packages:
+import os
 
 # Importing data management packages:
 import pandas as pd
@@ -144,3 +143,45 @@ class dfs0_pipeline(object):
         except ValueError: # If the forecast_df_lst is empty:
 
             print('\n![NO FILES FOUND CONFORMING TO CONCATINATION SPECIFICATIONS]!')
+
+# <----------------------------File Format Converstion/Export Methods---------->
+
+    # Method that exports a formatted pandas dataframe as a .csv file:
+    def write_csv(self, df, file_name):
+        '''
+        Method that converts a formatted pandas dataframe to a .csv file at a
+        specified file path in the root directory based on input file name.
+
+        Parameters
+        ----------
+        df : pandas dataframe
+            The (most likely) concatinated pandas dataframe that the method will
+            convert to a .csv file.
+
+        pathname : str
+            A string representing the name of the .csv file to be written to the
+            file directory. The file_name string is used to build the path string
+            that dictates where the file is written.
+        '''
+        # Building path string to write location:
+        csv_path = os.path.join(self.root_dir, f'{file_name}.csv')
+
+        # Try-Catch to deal with df being None type:
+        try:
+            # Writing the pandas dataframe to csv file:
+            df.to_csv(csv_path)
+
+            print(f'\n\n[CSV WRITTEN]: {self.client_name} data written to {csv_path} as csv')
+
+        except:
+            print(f'\n![ERROR]: Cannot Write to csv file. Input Parameter is {type(df)}!')
+
+
+
+
+"""
+# Testing:
+test = dfs0_pipeline('TT_SW_Ruby', "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
+concat_df = test.build_seven_day_forecast_data((2020, 17, 6))
+test.write_csv(concat_df, 'TT_SW_Ruby_concat')
+"""
