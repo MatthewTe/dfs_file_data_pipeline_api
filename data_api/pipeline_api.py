@@ -175,13 +175,3 @@ class dfs0_pipeline(object):
 
         except:
             print(f'\n![ERROR]: Cannot Write to csv file. Input Parameter is {type(df)}!')
-
-
-
-
-"""
-# Testing:
-test = dfs0_pipeline('TT_SW_Ruby', "C:\\Users\\teelu\\OneDrive\\Desktop\\test_data\\WaterForecastTT")
-concat_df = test.build_seven_day_forecast_data((2020, 17, 6))
-test.write_csv(concat_df, 'TT_SW_Ruby_concat')
-"""

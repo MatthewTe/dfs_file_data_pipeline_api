@@ -20,5 +20,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Operating System :: Windows"
     ],
-    install_requires=['pandas', 'numpy', 'matplotlib', 'plotly', 'dash', 'mikeio']
+    install_requires=[
+        'pandas', 'numpy', 'matplotlib', 'plotly', 'dash', 'mikeio', ]
 )
