@@ -37,7 +37,7 @@ class file_query_api(object):
         self.root_dir = root_dir
 
         # Path of the results sub-directory:
-        self.results_dir = self.root_dir + "\\TT_HD\\Results"
+        self.results_dir = self.root_dir + "\\TT_SW\\Results"
 
 # <-------------------------------General File Query Methods------------------->
 
