@@ -297,7 +297,7 @@ class file_query_api(object):
                 print(f'[MOST RECENT F-VALUE]: {lowest_f_val}')
                 print(f'[MOST RECENT FILE]: {f_val_name}\n')
 
-                if "TimeSeries" in pathname:
+                if "Timeseries" in pathname:
                     # Extracting TimeSeries string value from pathname:
                     date_val = pathname.replace(f"{self.results_dir}\\", '').replace(f"\\TimeSeries", "")
 
