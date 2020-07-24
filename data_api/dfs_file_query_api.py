@@ -299,7 +299,7 @@ class file_query_api(object):
 
                 if "Timeseries" in pathname:
                     # Extracting TimeSeries string value from pathname:
-                    date_val = pathname.replace(f"{self.results_dir}\\", '').replace(f"\\TimeSeries", "")
+                    date_val = pathname.replace(f"{self.results_dir}\\", '').replace(f"\\Timeseries", "")
 
                     # Building the path to the dfs0 file:
                     f_val_path = os.path.join(pathname, f_val_name)
