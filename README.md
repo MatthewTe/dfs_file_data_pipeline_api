@@ -28,7 +28,7 @@ This library was created in order to implement various data pipelines with vario
 ### HD Forecasting Pipeline with DFS0 files
 This was the initial pipeline that the library was created for. The goal was to create a series of apis that would allow the output from a DHI Hydrodynamic model to be automatically collected and concatenated in a way that would make it easy to pipe into some visualization library- most likely Dash/Plotly.
 
-The model outputs (accurately) a seven day future-forecast of hydro-data. It writes this data into a file directory with a pre-determined directory structure. The pipeline api object when called, should search the file structure for the appropriate files in the correct order and concatenate all dfs0 files into a single, plottable timeseries in a scheduled batch process (see pipeline_api Documentation for in-depth detail of how this process works). As more real-time dashboards that display model output data are added to the [flask webportal](placeholder) this pipeline is repeated for every individual dashboard. 
+The model outputs (accurately) a seven day future-forecast of hydro-data. It writes this data into a file directory with a pre-determined directory structure. The pipeline api object when called, should search the file structure for the appropriate files in the correct order and concatenate all dfs0 files into a single, plottable timeseries in a scheduled batch process (see pipeline_api Documentation for in-depth detail of how this process works). As more real-time dashboards that display model output data are added to the [flask webportal](https://github.com/MatthewTe/cdl_flask_main) this pipeline is repeated for every individual dashboard. 
 
 The abstract structure of this pipeline would be as follows:
 
