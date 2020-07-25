@@ -25,7 +25,7 @@ In other words the method builds a list of forecast dfs0 paths ordered by date f
 Example:
 ```python
 test = dfs0_pipeline('TT_HD_BPTT_Cypre', "Path to root directory")
-test.get_seven_day_forcast_files()
+test.build_seven_day_forecast_data()
 
 # <-----------------------------------Output----------------------------------->
 ```
