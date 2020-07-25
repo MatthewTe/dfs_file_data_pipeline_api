@@ -28,8 +28,10 @@ This library was created in order to implement various data pipelines with vario
 ### HD Forecasting Pipeline with DFS0 files
 This was the initial pipeline that the library was created for. The goal was to create a series of apis that would allow the output from a DHI Hydrodynamic model to be automatically collected and concatenated in a way that would make it easy to pipe into some visualization library- most likely Dash/Plotly.
 
-The model outputs (accurately) a seven day future-forecast of hydro-data. It writes this data into a file directory with a pre-determined directory structure. The pipeline api object when called, should search the file structure for the appropriate files in the correct order and concatenate all dfs0 files into a single, plottable timeseries in a scheduled batch process (see pipeline_api Documentation for in-depth detail of how this process works). The abstract structure of this pipeline would be as follows:
+The model outputs (accurately) a seven day future-forecast of hydro-data. It writes this data into a file directory with a pre-determined directory structure. The pipeline api object when called, should search the file structure for the appropriate files in the correct order and concatenate all dfs0 files into a single, plottable timeseries in a scheduled batch process (see pipeline_api Documentation for in-depth detail of how this process works). As more real-time dashboards that display model output data are added to the [flask webportal](placeholder) this pipeline is repeated for every individual dashboard. 
 
-![IMAGE NOT FOUND](placeholder)  
+The abstract structure of this pipeline would be as follows:
+
+![IMAGE NOT FOUND](https://github.com/MatthewTe/dfs_file_data_pipeline_api/blob/master/resources/Individual%20DFS0%20Pipeline.png)  
 
 **Note: These pipelines are not built in this package. This package contains the methods and apis to implement these pipelines. These pipeline descriptions are to give more context to the package as it shows the processes that these scripts were created for.*
