@@ -36,9 +36,6 @@ class file_query_api(object):
         # Path of the root diretory:
         self.root_dir = root_dir
 
-        # Path of the results sub-directory:
-        self.results_dir = self.root_dir + "\\TT_SW\\Results"
-
 # <-------------------------------General File Query Methods------------------->
 
     # Method that queries the directory and returns dfs filepaths based on kwargs:
@@ -78,7 +75,7 @@ class file_query_api(object):
         dfs_filepaths = []
 
         # Building start path for os.walk:
-        start_path = os.path.join(self.root_dir, "TT_HD\\Results")
+        start_path = self.root_dir
 
         # Conditional that seperates query based on if a date was input:
         if date == None:
@@ -156,8 +153,7 @@ class file_query_api(object):
         # Main empty list that will be built:
         date_lst = []
 
-        # Modifying root directory by adding \Results to main path:
-        results_dir = self.root_dir + "\\TT_HD\\Results"
+        results_dir = self.root_dir
 
         # Iterating through the results_dir and building lists based on dfs presence:
         for pathname, dir_name_lst, file_name_lst  in os.walk(results_dir):
@@ -221,7 +217,7 @@ class file_query_api(object):
         path_dict = {}
 
         # Building the start path to be stripped from path value:
-        start_path = os.path.join(self.root_dir, "TT_HD\\Results\\")
+        start_path = self.root_dir
 
         # Iterating through the list of dfs0 paths and building the dictionary:
         for path in dfs_list:
@@ -270,7 +266,7 @@ class file_query_api(object):
         forecast_dict = {}
 
         # Iterating through the results directory using os.walk:
-        for pathname, dir_name_lst, file_name_lst in os.walk(self.results_dir):
+        for pathname, dir_name_lst, file_name_lst in os.walk(self.root_dir):
 
             # Building a list of dfs0 file names for a specific client:
             client_name_lst = [
@@ -299,7 +295,7 @@ class file_query_api(object):
 
                 if "Timeseries" in pathname:
                     # Extracting TimeSeries string value from pathname:
-                    date_val = pathname.replace(f"{self.results_dir}\\", '').replace(f"\\Timeseries", "")
+                    date_val = pathname.replace(f"{self.root_dir}\\", '').replace(f"\\Timeseries", "")
 
                     # Building the path to the dfs0 file:
                     f_val_path = os.path.join(pathname, f_val_name)

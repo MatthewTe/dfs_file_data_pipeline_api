@@ -5,14 +5,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dfs_pipeline_api",
-    version="0.1.0",
+    version="0.1.1",
     author="MatthewTe",
     description="An API that allows for the exploration/extraction of DHI dfsu files ",
     long_description=long_description,
     url="https://github.com/MatthewTe/dfs_file_data_pipeline_api",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: - Alpha",
+        "Development Status :: - Beta",
         "Topic :: Data Science :: Pipeline API",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
