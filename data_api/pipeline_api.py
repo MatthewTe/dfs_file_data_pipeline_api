@@ -1,6 +1,6 @@
 # Importing all dfs apis:
 # API Imports for production:
-from data_api.dfs_file_query_api import file_query_api
+from dfs_file_query_api import file_query_api
 from data_api.dfs_ingestion_api import dfs0_ingestion_engine
 
 # Importing path management packages:

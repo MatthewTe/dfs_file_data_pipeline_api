@@ -293,9 +293,17 @@ class file_query_api(object):
                 print(f'[MOST RECENT F-VALUE]: {lowest_f_val}')
                 print(f'[MOST RECENT FILE]: {f_val_name}\n')
 
-                if "Timeseries" in pathname:
-                    # Extracting TimeSeries string value from pathname:
-                    date_val = pathname.replace(f"{self.root_dir}\\", '').replace(f"\\Timeseries", "")
+                # Case insensitive string comparison:
+                if "TimeSeries".lower() in pathname.lower():
+
+                    # lazy/Brute-Force method of dropping 'TimeSeries' & Timeseries:
+                    if "TimeSeries" in pathname:
+                        # Extracting TimeSeries string value from pathname:
+                        date_val = pathname.replace(f"{self.root_dir}\\", '').replace(f"\\TimeSeries", "")
+
+                    if "Timeseries" in pathname:
+                        # Extracting TimeSeries string value from pathname:
+                        date_val = pathname.replace(f"{self.root_dir}\\", '').replace(f"\\Timeseries", "")
 
                     # Building the path to the dfs0 file:
                     f_val_path = os.path.join(pathname, f_val_name)
