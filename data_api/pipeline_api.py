@@ -206,10 +206,3 @@ class dfs0_pipeline(object):
 
         except:
             print(f'\n![ERROR]: Cannot Write to csv file. Input Parameter is {type(df)}!')
-
-
-test_pipeline = dfs0_pipeline('TT_HD_BHP_Ruby', "\\\\MODEL-PC1\\WaterForecastTT\\TT_HD\\Results")
-
-data = test_pipeline.build_seven_day_forecast_data()
-
-print(data)
