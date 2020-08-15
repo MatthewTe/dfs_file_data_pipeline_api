@@ -104,10 +104,41 @@ class dfs0_pipeline(object):
 
         print('[CURRENT DATE USED AS START POINT FOR FILE QUERY]:', current_date)
 
+        # Method that converts date_key string to datetime object w/ error checking:
+        def convert_date_key(date_key):
+            '''
+            A method called by list comprehension to convert a date string to
+            the necessary date time object.
+
+            This method not only performs the basic datetime.strptime() method
+            on the date but it handels exceptions and is used for error checking
+            for each 'date key' as try catches are not possible in list comprehension.
+
+            Parameters
+            ----------
+            date_key : str
+                The string representing the date value to be converted to a datetime
+                    object
+
+            Returns
+            -------
+            date_val : datetime object
+                The object that is created as a result of converting the date_key
+                    string to a datetime object.
+            '''
+            # When a new mesh is stared the name of the file includes a tag '-newmesh'
+            # that needs to be removed to prevent erroring when converting to datetime.
+            if "-newmesh" in date_key:
+                date_key = date_key.replace('-newmesh', '')
+
+            # Performing actual string -> datetime converstion:
+            date_val = datetime.strptime(date_key, "%Y%m%d%H")
+
+            return date_val
+
         # Creating a list of datetime object from the forecast_dict keys:
         date_lst = [
-            datetime.strptime(date_key, "%Y%m%d%H") for date_key in forecast_dict]
-
+            convert_date_key(date_key) for date_key in forecast_dict]
         # Slicing date_lst for date values only seven days ahead of current_date
         # and re-converting them to strings:
         forecast_date_lst = [
@@ -175,3 +206,10 @@ class dfs0_pipeline(object):
 
         except:
             print(f'\n![ERROR]: Cannot Write to csv file. Input Parameter is {type(df)}!')
+
+
+test_pipeline = dfs0_pipeline('TT_HD_BHP_Ruby', "\\\\MODEL-PC1\\WaterForecastTT\\TT_HD\\Results")
+
+data = test_pipeline.build_seven_day_forecast_data()
+
+print(data)
