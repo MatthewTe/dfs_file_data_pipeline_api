@@ -144,7 +144,7 @@ class dfs0_pipeline(object):
         forecast_date_lst = [
 
             # > 0 to filter out negative values:
-            date for date in date_lst if (date - current_date).days <= 7 and
+            date for date in date_lst if (date - current_date).days <= 8 and
             (date - current_date).days > 0
             ]
 
