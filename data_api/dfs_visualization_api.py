@@ -131,6 +131,7 @@ class dashboard(dfsu_ingestion_engine):
 
         # Key-Value store of config information for each polar radial plot:
         self.barpolar_format = {}
+
     # Method that returns a figure representing the main dashboard of a single point:
     def plot_node_data(self, long, lat, depth):
         '''
@@ -227,6 +228,7 @@ class dashboard(dfsu_ingestion_engine):
                 )
 
         return fig
+
     # Method that returns a figure containing summary plots about a single point water column:
     def plot_water_column_table(self, long, lat): # TODO: Name to long winded?
         '''
@@ -308,6 +310,7 @@ class dashboard(dfsu_ingestion_engine):
                 )
 
         return go.Figure(data=table)
+
     # Method that returns a timeseries scatterplot plotly object based on input data:
     def create_timeseries(self, long, lat, depth, plot_name):
         '''
@@ -346,6 +349,7 @@ class dashboard(dfsu_ingestion_engine):
             name= self.timeseries_format[plot_name]['title'])
 
         return timeseries_plot
+
     # Method that plots a specific polar plot:
     def create_polar_plot(self, long, lat, depth, r_column, theta_column):
         '''
